@@ -1,11 +1,71 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signup</title>
-</head>
-<body>
-    Signup page
+{% extends "base.html" %}
+{% load static %}
+
+
+
+{% block title %}
+<title>SchoolApp | Signin</title>
+{% endblock title %}
+
+
+{% block csscode %}
+<style>
+    body {
+        box-sizing: border-box;
+        min-height: 100vh;
+        background-color: #fff;
+        font-family: Arial, Helvetica, sans-serif;
+        background-image: url("https://t4.ftcdn.net/jpg/05/69/28/27/360_F_569282797_NjFV9M9fsZ9kz7fJ6cToGq7EWhIr8DaE.jpg");
+        background-size: cover;
+        background-position: center;
+    }
+
+    form {
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 10px;
+        width: 100%;
+        max-width: 500px;
+    }
+
+    input {
+        margin-bottom: 15px;
+    }
+
+    .form-section{
+        min-height: 100vh;
+    }
+</style>
+{% endblock csscode %}
+
+
+{% block body %}
+<div class="container-fluid container-md ">
+    <div class="form-section d-flex flex-column justify-content-center align-items-center">
+        <form class="" method="post" action="signin">
+
+            <h4 class="text-uppercase fw-bold text-center mb-3">Login</h4>
+
+            <div class="alert alert-danger p-1 text-center">
+                <span class="small">Records Not Found</span>
+            </div>
+
+            <label for="username">Username : </label>
+            <input type="text" name="username" id="username" class="form-control">
+
+            <label for="password">Password : </label>
+            <input type="password" name="password" id="username" class="form-control">
+
+            <button type="submit" class="btn btn-danger text-center w-100 mt-3">Submit</button>
+
+            <div class="text-center mt-3">
+                <a href="" class="text-decoration-none small">Forget Password ?</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock body %}
+
 </body>
+
 </html>
