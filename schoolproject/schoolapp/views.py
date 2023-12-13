@@ -19,9 +19,15 @@ def signin(request):
 
     return render(request, "signin.html")
 
-
+@login_required(login_url="signin")
 def home(request):
     return render(request,"home.html")
 
+@login_required(login_url="signin")
 def create_new_user(request):
     return render(request,"create-user-form.html")
+
+@login_required(login_url="signin")
+def logout(request):
+    auth.logout(request)
+    return redirect('signin')
