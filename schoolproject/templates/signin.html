@@ -32,28 +32,45 @@
         margin-bottom: 15px;
     }
 
-    .form-section{
+    .form-label{
+       margin-bottom: 5px;
+       font-weight: 600;
+       font-size: small;
+    }
+
+    .form-section {
         min-height: 100vh;
+    }
+
+    @media screen and (max-width:600px) {
+        body{
+            background-color: #fff;
+            background-image: none;
+        }
     }
 </style>
 {% endblock csscode %}
 
 
 {% block body %}
-<div class="container-fluid container-md ">
+<div class="container-fluid container-md p-0">
     <div class="form-section d-flex flex-column justify-content-center align-items-center">
         <form class="" method="post" action="signin">
-
+            {% csrf_token %}
             <h4 class="text-uppercase fw-bold text-center mb-3">Login</h4>
 
+            {% if messages %}
+            {% for message in messages %}
             <div class="alert alert-danger p-1 text-center">
-                <span class="small">Records Not Found</span>
+                <span class="small">{{message}}</span>
             </div>
+            {% endfor %}
+            {% endif %}
 
-            <label for="username">Username : </label>
+            <label for="username" class="form-label">Username : </label>
             <input type="text" name="username" id="username" class="form-control">
 
-            <label for="password">Password : </label>
+            <label for="password" class="form-label">Password : </label>
             <input type="password" name="password" id="username" class="form-control">
 
             <button type="submit" class="btn btn-danger text-center w-100 mt-3">Submit</button>
