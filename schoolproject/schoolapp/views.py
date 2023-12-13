@@ -47,14 +47,14 @@ def create_new_user(request):
                 messages.error(request, "username must contain atleast 6 characters")
                 return redirect('create-user')
             else:
-                user = User.objects.create_user(username, password)
+                user = User.objects.create_user(username, password=password)
                 user.save()
                 
                 user = User.objects.get(username=username)
                 
                 student = StudentDetails(student=user,full_name=full_name,roll_no=roll_num,stu_class=stu_class,date_of_birth=date_of_birth,gender=gender)
                 student.save()
-                
+
                 messages.info(request, "Account created successfully")
                 return redirect('create-user')
         else:
@@ -71,6 +71,7 @@ def logout(request):
 def edit_student_profile(request,id):
     
     if request.method == 'POST':
+        image = request.FILES['profile_image']
         email = request.POST['stu_email']
         street = request.POST['street']
         city = request.POST['city']
@@ -83,6 +84,7 @@ def edit_student_profile(request,id):
         
         student = StudentDetails.objects.get(id=id)
         
+        student.profile_image = image
         student.email = email
         student.street = street
         student.city = city
@@ -93,8 +95,9 @@ def edit_student_profile(request,id):
         student.mother_name = mother_name
         student.mother_contact = mother_number
         
-        student.save()
-    
+        user = student.save()
+        update_session_auth_hash(request, user)
+        
     user = None
     try:
         user = StudentDetails.objects.get(id=id)
@@ -110,8 +113,9 @@ def edit_student_profile(request,id):
 
 @login_required(login_url="signin")
 def change_password(request):
+    user = User.objects.get(id=15)
     if request.method == 'POST':
-        form = PasswordChangeForm(request.user, request.POST)
+        form = PasswordChangeForm(user, request.POST)
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)

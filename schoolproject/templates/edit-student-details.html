@@ -46,6 +46,12 @@
         color: red;
     }
 
+    img {
+        border-radius: 50%;
+        border: 3px solid rgba(255, 0, 0, 0.853);
+        padding: 0;
+    }
+
     @media screen and (max-width:600px) {
         .form-control {
             padding: 8px;
@@ -59,7 +65,7 @@
 {% block body %}
 <div class="container-fluid-sm container-md p-0">
     <div class="form-section d-flex flex-column justify-content-center align-items-center">
-        <form class="" method="post" action="">
+        <form class="" method="post" action="" enctype="multipart/form-data">
             {% csrf_token %}
             <h4 class="text-uppercase fw-bold text-center mb-3">Edit Student Details</h4>
 
@@ -71,8 +77,17 @@
             {% endfor %}
             {% endif %}
 
+
             <p class="fw-bold mt-3 mb-0">PERSONAL DETAILS</p>
+            <div class="col-md-6 text-center">
+              
+                <img src="{{user.profile_image.url}}"
+                    class="p-0 m-0" alt="" width="100px" id="output-img">
+               
+                <input type="file" name="profile_image" id="profile_image" onchange="loadFile(event)" class="form-control mt-2" value="{{user.profile_image.url}}">
+            </div>
             <div class="row">
+
                 <div class="col-md-6">
                     <label for="fullname" class="form-label">Full Name : </label>
                     <input type="text" name="full-name" id="fullname" class="form-control" value="{{user.full_name}}"
@@ -119,7 +134,8 @@
                 <p class="fw-bold mt-3 mb-0">CONTACT</p>
                 <div class="col-md-6">
                     <label for="father_name" class="form-label">Father Name : </label>
-                    <input type="text" name="father_name" id="father_name" class="form-control" value="{{user.father_name}}">
+                    <input type="text" name="father_name" id="father_name" class="form-control"
+                        value="{{user.father_name}}">
 
                     <label for="father_number" class="form-label">Phone Number : </label>
                     <input type="text" name="father_number" id="father_number" class="form-control"
@@ -128,7 +144,8 @@
 
                 <div class="col-md-6">
                     <label for="mother_name" class="form-label">Mother Name : </label>
-                    <input type="text" name="mother_name" id="mother_name" class="form-control" value="{{user.mother_name}}">
+                    <input type="text" name="mother_name" id="mother_name" class="form-control"
+                        value="{{user.mother_name}}">
 
                     <label for="mother_number" class="form-label">Phone Number : </label>
                     <input type="text" name="mother_number" id="mother_number" class="form-control"
@@ -142,7 +159,14 @@
     </div>
 </div>
 
+<script>
+     var loadFile = function (event) {
+        var output = document.getElementById('output-img')
+        output.src = URL.createObjectURL(event.target.files[0])
+        output.onload = () => {
+            URL.revokeObjectURL(output.src)
+        }
+    }
 
-</div>
-</div>
+</script>
 {% endblock body %}
