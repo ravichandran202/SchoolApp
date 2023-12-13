@@ -45,6 +45,13 @@
     span{
         color: red;
     }
+
+    @media screen and (max-width:600px) {
+        .form-control {
+            padding: 8px;
+            font-size: .9rem;
+        }
+    }
 </style>
 {% endblock csscode %}
 
@@ -88,6 +95,16 @@
                 <option value="5">5</option>
             </select>
 
+            <label for="dob" class="form-label">Date of Birth<span>*</span> : </label>
+            <input type="date" name="dob" id="dob" class="form-control">
+
+            <label for="gender" class="form-label">Gender<span>*</span> : </label>
+            <select name="gender" id="gender" class="form-select  mb-3">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="female">Others</option>
+            </select>
+
 
             <div class="alert alert-primary p-1 ps-2">
                 <li class="small">* Indicates required feilds</li>
@@ -101,7 +118,3 @@
     </div>
 </div>
 {% endblock body %}
-
-</body>
-
-</html>

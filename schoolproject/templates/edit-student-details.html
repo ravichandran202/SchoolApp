@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+
+{% block title %}
+<title>SchoolApp | Signin</title>
+{% endblock title %}
+
+
+{% block csscode %}
+<style>
+    body {
+        box-sizing: border-box;
+        min-height: 100vh;
+        background-color: #fff;
+        font-family: Arial, Helvetica, sans-serif;
+        background-image: url("https://t4.ftcdn.net/jpg/05/69/28/27/360_F_569282797_NjFV9M9fsZ9kz7fJ6cToGq7EWhIr8DaE.jpg");
+        background-size: cover;
+        background-position: center;
+    }
+
+    form {
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 10px;
+        width: 100%;
+        max-width: 800px;
+    }
+
+    input {
+        margin-bottom: 15px;
+    }
+
+    .form-label {
+        margin-bottom: 5px;
+        font-weight: 600;
+        font-size: small;
+    }
+
+    .form-section {
+        min-height: 100vh;
+    }
+
+    span {
+        color: red;
+    }
+
+    @media screen and (max-width:600px) {
+        .form-control {
+            padding: 8px;
+            font-size: .9rem;
+        }
+    }
+</style>
+{% endblock csscode %}
+
+
+{% block body %}
+<div class="container-fluid-sm container-md p-0">
+    <div class="form-section d-flex flex-column justify-content-center align-items-center">
+        <form class="" method="post" action="">
+            {% csrf_token %}
+            <h4 class="text-uppercase fw-bold text-center mb-3">Edit Student Details</h4>
+
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-danger p-1 text-center">
+                <span class="small">{{message}}</span>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            <p class="fw-bold mt-3 mb-0">PERSONAL DETAILS</p>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="fullname" class="form-label">Full Name : </label>
+                    <input type="text" name="full-name" id="fullname" class="form-control" value="{{user.full_name}}"
+                        disabled>
+
+                    <label for="rollnum" class="form-label">Roll Number : </label>
+                    <input type="text" name="rollnum" id="rollnum" class="form-control" value="{{user.roll_no}}"
+                        disabled>
+
+                    <label for="gender" class="form-label">Gender : </label>
+                    <input type="text" name="gender" id="gender" class="form-control" value="{{user.gender}}" disabled>
+                </div>
+
+
+                <div class="col-md-6">
+                    <label for="class" class="form-label">Class : </label>
+                    <input type="text" name="class" id="class" class="form-control" value="{{user.stu_class}}" disabled>
+
+                    <label for="dob" class="form-label">D.O.B : </label>
+                    <input type="text" name="dob" id="dob" class="form-control" value="{{user.date_of_birth}}" disabled>
+
+                    <label for="stu_email" class="form-label">Email : </label>
+                    <input type="email" name="stu_email" id="stu_email" class="form-control" value="{{user.email}}">
+                </div>
+
+                <p class="fw-bold mt-3 mb-0">ADDRESS</p>
+                <div class="col-md-6">
+                    <label for="street" class="form-label">Street : </label>
+                    <input type="text" name="street" id="street" class="form-control" value="{{user.street}}">
+
+                    <label for="city" class="form-label">City : </label>
+                    <input type="text" name="city" id="city" class="form-control" value="{{user.city}}">
+                </div>
+
+                <div class="col-md-6">
+                    <label for="state" class="form-label">State : </label>
+                    <input type="text" name="state" id="state" class="form-control" value="{{user.state}}">
+
+                    <label for="zip-code" class="form-label">Zip Code : </label>
+                    <input type="text" name="zip-code" id="zip-code" class="form-control" value="{{user.zip_code}}">
+                </div>
+
+
+                <p class="fw-bold mt-3 mb-0">CONTACT</p>
+                <div class="col-md-6">
+                    <label for="father_name" class="form-label">Father Name : </label>
+                    <input type="text" name="father_name" id="father_name" class="form-control" value="{{user.father_name}}">
+
+                    <label for="father_number" class="form-label">Phone Number : </label>
+                    <input type="text" name="father_number" id="father_number" class="form-control"
+                        value="{{user.father_contact}}">
+                </div>
+
+                <div class="col-md-6">
+                    <label for="mother_name" class="form-label">Mother Name : </label>
+                    <input type="text" name="mother_name" id="mother_name" class="form-control" value="{{user.mother_name}}">
+
+                    <label for="mother_number" class="form-label">Phone Number : </label>
+                    <input type="text" name="mother_number" id="mother_number" class="form-control"
+                        value="{{user.mother_contact}}">
+                </div>
+
+
+                <button type="submit" class="btn btn-danger text-center w-100 mt-3 mx-auto"
+                    style="max-width: 350px;">Submit</button>
+        </form>
+    </div>
+</div>
+
+
+</div>
+</div>
+{% endblock body %}
