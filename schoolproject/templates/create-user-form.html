@@ -52,7 +52,7 @@
 {% block body %}
 <div class="container-fluid-sm container-md p-0">
     <div class="form-section d-flex flex-column justify-content-center align-items-center">
-        <form class="" method="post" action="signin">
+        <form class="" method="post" action="create-user">
             {% csrf_token %}
             <h4 class="text-uppercase fw-bold text-center mb-3">Create Form</h4>
 
@@ -68,16 +68,16 @@
             <input type="text" name="username" id="username" class="form-control">
 
             <label for="password" class="form-label">Password<span>*</span> : </label>
-            <input type="password" name="password" id="username" class="form-control">
+            <input type="password" name="password" id="password" class="form-control">
 
             <label for="password2" class="form-label">Confirm Password<span>*</span> : </label>
-            <input type="password" name="password2" id="username2" class="form-control">
+            <input type="password" name="password2" id="password2" class="form-control">
 
             <label for="fullname" class="form-label">Full Name<span>*</span> : </label>
             <input type="text" name="full-name" id="fullname" class="form-control">
 
             <label for="rollnum" class="form-label">Roll Number<span>*</span> : </label>
-            <input type="text" name="username" id="rollnum" class="form-control">
+            <input type="text" name="rollnum" id="rollnum" class="form-control">
 
             <label for="class" class="form-label">Class<span>*</span> : </label>
             <select name="class" id="class" class="form-select  mb-3">
@@ -91,8 +91,8 @@
 
             <div class="alert alert-primary p-1 ps-2">
                 <li class="small">* Indicates required feilds</li>
-                <!-- <li class="small">Please enter details correctly</li>
-                <li class="small">Please enter details correctly</li> -->
+                <li class="small">Username Should be unique</li>
+                <li class="small">Username must contain atleast 6 characters</li>
             </div>
 
             <button type="submit" class="btn btn-danger text-center w-100 mt-3">Submit</button>
