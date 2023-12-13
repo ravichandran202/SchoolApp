@@ -71,16 +71,7 @@ The Teacher-Student Collaboration Web App is a Django-based web application desi
 - Teachers can create classes, manage student profiles, input grades, and communicate with parents.
 - Parents can view their child's academic information, receive updates, and communicate with teachers.
 
-## Contributing
-
-If you'd like to contribute to the project, please follow our [Contribution Guidelines](CONTRIBUTING.md).
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
-
 ## Acknowledgments
 
 - Thanks to the Django community for providing a powerful web framework.
-- ...
 
