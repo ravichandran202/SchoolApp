@@ -103,6 +103,7 @@ def edit_student_profile(request,id):
         context = {
         'user':StudentDetails.objects.get(id=id)
         }
+        return redirect("profile_page",student.id)
         return render(request,"profile-page.html",context=context)
 
     user = None
