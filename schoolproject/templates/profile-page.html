@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block title %}
+<title>SchoolApp | Home</title>
+{% endblock title %}
+
+
+{% block csscode %}
+
+<style>
+    body {
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+        overflow-x: hidden;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    h3 {
+        font-size: 1.3rem;
+        color: white;
+    }
+
+    h4 {
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    span {
+        text-transform: uppercase;
+        font-weight: 700;
+        font-size: 1.2rem;
+    }
+
+    p {
+        font-size: 1.1rem;
+        opacity: .9;
+    }
+
+    .left-section {
+        min-height: 100vh;
+    }
+
+    .right-section {
+        height: 100vh;
+    }
+
+    img {
+        border-radius: 50%;
+        border: 3px solid black;
+        width: 150px;
+        height: 150px;
+        cursor: pointer;
+    }
+
+    @media screen and (max-width:770px) {
+        img {
+            border-radius: 50%;
+            border: 3px solid black;
+            width: 125px;
+            height: 125px;
+        }
+
+        h3 {
+            color: black;
+            font-weight: 600;
+            letter-spacing: 3px;
+            font-size: 1rem;
+        }
+
+        h5 {
+            text-align: center;
+        }
+
+        .left-section {
+            min-height: auto;
+        }
+
+        span {
+            font-size: .9rem;
+            font-weight: 600;
+        }
+
+        p {
+            font-size: .8rem;
+        }
+    }
+</style>
+{% endblock csscode %}
+
+
+{% block body %}
+<div class="container-fluid ">
+    <div class="row">
+        <div class=" col-12 col-md-3 m-0 p-0">
+            <div class=" d-block d-md-none left-section text-center pt-3">
+                {%if user.profile_image %}
+                <img src="{{user.profile_image.url}}" class="p-0 m-0" alt="" width="100px" id="output-img1"
+                    data-toggle="modal" data-target="#exampleModal"><br>
+                {% else %}
+                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="p-0 m-0" alt="" width="100px"
+                    id="output-img2" data-toggle="modal" data-target="#exampleModal">
+                {% endif %}
+                <br>
+                <h3 class="text-uppercase pt-2">{{user.full_name}}</h3>
+                <button class="btn btn-primary py-2 px-5"><a href="{% url 'edit-student-profile' user.id %}"
+                        class="text-white text-decoration-none">Edit Profile</a></button>
+            </div>
+            <div class="d-none d-md-block left-section bg-danger bg-gradient text-center pt-3">
+                {%if user.profile_image %}
+                <img src="{{user.profile_image.url}}" class="p-0 m-0" alt="" width="100px" id="output-img1"
+                    data-toggle="modal" data-target="#exampleModal"><br>
+                {% else %}
+                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="p-0 m-0" alt="" width="100px"
+                    id="output-img2" data-toggle="modal" data-target="#exampleModal">
+                {% endif %}
+                <br>
+                <h3 class="text-uppercase pt-2">{{user.full_name}}</h3>
+
+                <button class="btn btn-primary py-2 px-5"><a href="{% url 'edit-student-profile' user.id %}"
+                        class="text-white text-decoration-none">Edit Profile</a></button>
+
+            </div>
+        </div>
+        <div class="col-12 col-md-9 m-0 p-0">
+            <div class="right-section p-3">
+                <div class="row">
+                    <h5 class="small text-danger text-uppercase">Personal Details</h5>
+                    <hr>
+                    <p class="col-12 col-md-6"> <span>Full Name : </span> <br>{{user.full_name}}</p>
+                    <p class="col-12 col-md-6"> <span>Roll Number : </span> <br> {{user.roll_no}}</p>
+                    <p class="col-12 col-md-6"> <span>D.O.B : </span> <br> {{user.date_of_birth}}</p>
+                    <p class="col-12 col-md-6"> <span>Gender : </span> <br> {{user.gender}}</p>
+
+                    <h5 class="small text-danger text-uppercase">Contact</h5>
+                    <hr>
+                    <p class="col-12"> <span>Email : </span> <br> {{user.email}}</p>
+                    <p class="col-12 col-md-6"> <span>Father Name : </span> <br> {{user.father_name}}</p>
+                    <p class="col-12 col-md-6"> <span>Number : </span> <br> {{user.father_contact}}</p>
+                    <p class="col-12 col-md-6"> <span>Mother Name : </span> <br> {{user.mother_name}}</p>
+                    <p class="col-12 col-md-6"> <span>Number : </span> <br> {{user.mother_contact}}</p>
+
+                    <h5 class="small text-danger text-uppercase">Address</h5>
+                    <hr>
+                    <p class="col-12 col-md-6"> <span>Street : </span> <br>{{user.street}}</p>
+                    <p class="col-12 col-md-6"> <span>City : </span> <br> {{user.city}}</p>
+                    <p class="col-12 col-md-6"> <span>State : </span> <br> {{user.state}}</p>
+                    <p class="col-12 col-md-6"> <span>Zipcode : </span> <br> {{user.zip_code}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Change Profile Image {{user_student.id}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="file" class="form-control" name="profile_image">
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}

@@ -80,11 +80,14 @@
 
             <p class="fw-bold mt-3 mb-0">PERSONAL DETAILS</p>
             <div class="col-md-6 text-center">
-              
-                <img src="{{user.profile_image.url}}"
-                    class="p-0 m-0" alt="" width="100px" id="output-img">
-               
-                <input type="file" name="profile_image" id="profile_image" onchange="loadFile(event)" class="form-control mt-2" value="{{user.profile_image.url}}">
+
+                {%if user.profile_image %}
+                <img src="{{user.profile_image.url}}" class="p-0 m-0" alt="" width="100px" id="output-img1"><br>
+                {% else %}
+                <img src="https://img.freepik.com/premium-vector/man-avatar-profile-picture-vector-illustration_268834-538.jpg?w=740"
+                    class="p-0 m-0" alt="" width="100px" id="output-img2">
+                {% endif %}
+
             </div>
             <div class="row">
 
@@ -160,8 +163,16 @@
 </div>
 
 <script>
-     var loadFile = function (event) {
-        var output = document.getElementById('output-img')
+    var loadFile = function (event) {
+        var output = document.getElementById('output-img1')
+        output.src = URL.createObjectURL(event.target.files[0])
+        output.onload = () => {
+            URL.revokeObjectURL(output.src)
+        }
+    }
+
+    var loadFile = function (event) {
+        var output = document.getElementById('output-img2')
         output.src = URL.createObjectURL(event.target.files[0])
         output.onload = () => {
             URL.revokeObjectURL(output.src)

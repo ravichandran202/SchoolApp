@@ -68,10 +68,14 @@ def logout(request):
     return redirect('signin')
 
 @login_required(login_url="signin")
+
 def edit_student_profile(request,id):
-    
     if request.method == 'POST':
-        image = request.FILES['profile_image']
+        # image = None
+        # try:
+        #     image = request.FILES['profile_image']
+        # except:
+        #     pass
         email = request.POST['stu_email']
         street = request.POST['street']
         city = request.POST['city']
@@ -84,7 +88,7 @@ def edit_student_profile(request,id):
         
         student = StudentDetails.objects.get(id=id)
         
-        student.profile_image = image
+        # student.profile_image = image
         student.email = email
         student.street = street
         student.city = city
@@ -95,13 +99,15 @@ def edit_student_profile(request,id):
         student.mother_name = mother_name
         student.mother_contact = mother_number
         
-        user = student.save()
-        update_session_auth_hash(request, user)
-        
+        student.save()
+        context = {
+        'user':StudentDetails.objects.get(id=id)
+        }
+        return render(request,"profile-page.html",context=context)
+
     user = None
     try:
         user = StudentDetails.objects.get(id=id)
-        print()
     except:
         return HttpResponse("Error Occured")
     
@@ -113,9 +119,8 @@ def edit_student_profile(request,id):
 
 @login_required(login_url="signin")
 def change_password(request):
-    user = User.objects.get(id=15)
     if request.method == 'POST':
-        form = PasswordChangeForm(user, request.POST)
+        form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)
@@ -131,3 +136,14 @@ def change_password(request):
 
 
     
+def profile_page(request,id):
+    if request.method == 'POST':
+        image = request.FILES['profile_image']
+        student = StudentDetails.objects.get(id=id)
+        
+        student.profile_image = image
+        student.save()
+    context = {
+        'user':StudentDetails.objects.get(id=id)
+    }
+    return render(request,"profile-page.html",context=context)
