@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+
+{% block title %}
+<title>SchoolApp | Signin</title>
+{% endblock title %}
+
+
+{% block csscode %}
+<style>
+    body {
+        box-sizing: border-box;
+        min-height: 100vh;
+        background-color: #fff;
+        font-family: Arial, Helvetica, sans-serif;
+        background-image: url("https://t4.ftcdn.net/jpg/05/69/28/27/360_F_569282797_NjFV9M9fsZ9kz7fJ6cToGq7EWhIr8DaE.jpg");
+        background-size: cover;
+        background-position: center;
+    }
+
+    form {
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 10px;
+        width: 100%;
+        max-width: 500px;
+    }
+
+    input {
+        margin-bottom: 15px;
+    }
+
+    label{
+       margin-bottom: 5px;
+       font-weight: 600;
+       font-size: small;
+    }
+
+    .form-section {
+        min-height: 100vh;
+    }
+
+    span{
+        color: red;
+    }
+
+    ul{
+        font-size: small;
+    }
+
+    @media screen and (max-width:600px) {
+        body{
+            background-image: none;
+            background-color: white;
+        }
+        .form-control {
+            padding: 8px;
+            font-size: .9rem;
+        }
+    }
+</style>
+{% endblock csscode %}
+
+
+{% block body %}
+<div class="container-fluid-sm container-md p-0">
+    <div class="form-section d-flex flex-column justify-content-center align-items-center">
+        <form class="" method="post" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            <h4 class="text-uppercase fw-bold text-center mb-3">CREATE ANNOUNCEMENT</h4>
+            <label for="title" class="form-label">Title : </label>
+            <input type="text" name="title" id="title" class="form-control" required>
+
+            <label for="image_file" class="form-label">Image : </label>
+            <input type="file" name="image_file" id="image_file" class="form-control">
+
+            <label for="content" class="form-label">Content : </label>
+            <textarea class="form-control" rows="8" name="content" required></textarea>
+
+            <label for="announce_to" class="form-label mt-3">Announce To : </label>
+            <select name="announce_to" id="announce_to" class="form-select  mb-3" required>
+                <option value="0">For Everyone</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+
+            <button type="submit" class="btn btn-danger w-100 mt-3">Submit</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const inputEl = document.querySelectorAll('input')
+    for(let i = 0; i < inputEl.length;i++){
+        inputEl[i].setAttribute("class","form-control")
+    }
+
+    const listEl = document.querySelectorAll('ul')
+    listEl[0].setAttribute("class","alert alert-primary")
+</script>
+{% endblock body %}

@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+
+{% block title %}
+<title>SchoolApp | Home</title>
+{% endblock title %}
+
+
+{% block csscode %}
+<style>
+    body {
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif
+    }
+
+    .header-image {
+        display: flex;
+        min-height: 35vh;
+        justify-content: center;
+        align-items: center;
+        background-image: url('https://img.freepik.com/free-photo/top-view-books-with-copy-space_23-2148827187.jpg?w=1380&t=st=1702659354~exp=1702659954~hmac=132cbb6967957450d0762dce11c51a2aacb8bf0b0b1b75669bbc1f24eeab1abf');
+        background-position: center;
+        background-size: cover;
+    }
+
+    h1 {
+        font-size: 3rem;
+        font-weight: 700;
+    }
+
+    .announce-section {
+        padding: 0 3rem;
+        margin: auto;
+        margin-top: .5rem;
+        width: 70%;
+
+    }
+
+    .title {
+        font-size: 1.5rem;
+    }
+
+    .inner-content {
+        padding-left: 2rem;
+    }
+
+    .posted {
+        color: red;
+        font-size: .8rem;
+        font-weight: 600;
+    }
+
+    @media screen and (max-width:800px) {
+        .container-fluid {
+            padding: 0;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .header-image {
+            min-height: 25vh;
+            justify-content: center;
+        }
+
+        .announce-section {
+            padding: 0 0rem;
+            width: 90%;
+        }
+
+        .title {
+            font-size: 1rem;
+        }
+
+        .inner-content {
+            padding-left: .9rem;
+        }
+
+        p,
+        span,
+        a {
+            font-size: .8rem;
+            opacity: .9;
+        }
+
+        .posted {
+            font-size: .7rem;
+        }
+    }
+</style>
+{% endblock csscode %}
+
+
+{% block body %}
+<div class="container-fluid container-md ">
+    <div class="section">
+        <div class="header-image">
+            <h1>ANNOUNCEMENTS</h1>
+        </div>
+
+        {% for announcement in announcements %}
+        <div class="announce-section">
+            <h2 class="title">{{forloop.counter}}. {{announcement.title }}</h2>
+            <div class="inner-content">
+                <p>{{announcement.content | truncatewords:25}}</p>
+                <span>Uploaded by - <span class="fw-bold fst-italic">{{announcement.created_by}}</span></span> <br>
+
+                <span class="posted small">{{announcement.created_at | timesince}}</span>
+                <a href="{% url 'announchment' announcement.id %}" class="float-end text-decoration-none">Read More...</a>
+
+            </div>
+            <hr>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock body %}
+
+</body>
+
+</html>

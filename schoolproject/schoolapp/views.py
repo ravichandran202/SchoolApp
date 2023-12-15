@@ -5,8 +5,9 @@ from django.contrib.auth.models import User, auth
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
+from .forms import AnnouncementForm
 from django.contrib.auth import update_session_auth_hash
-from .models import StudentDetails
+from .models import StudentDetails,Announcement
 # Create your views here.
 def signin(request):
     if request.method == 'POST':
@@ -104,8 +105,7 @@ def edit_student_profile(request,id):
         'user':StudentDetails.objects.get(id=id)
         }
         return redirect("profile_page",student.id)
-        return render(request,"profile-page.html",context=context)
-
+    
     user = None
     try:
         user = StudentDetails.objects.get(id=id)
@@ -148,3 +148,47 @@ def profile_page(request,id):
         'user':StudentDetails.objects.get(id=id)
     }
     return render(request,"profile-page.html",context=context)
+
+def create_announchment(request):
+    if request.method == 'POST':
+        image = None
+        title = request.POST['title']
+        try:
+            image = request.FILES['image_file']
+        except:
+            image = None
+        content = request.POST['content']
+        announce_to = request.POST['announce_to']
+        
+        Announcement(created_by = request.user, title=title,image=image,content=content,announce_to=announce_to).save()
+        
+    return render(request,"create-announcement.html")
+
+def edit_announchment(request,id):
+    form_model = Announcement.objects.get(id=id)
+    form = AnnouncementForm(instance= form_model)
+    if request.method == 'POST':
+        form = AnnouncementForm(request.POST,instance= form_model)
+        if form.is_valid():
+            form.save()
+    else:
+        form = AnnouncementForm(instance= form_model)
+    context = {
+        'form':form
+    }
+    return render(request,"edit-announcement.html",context=context) 
+
+
+def announcements(request):
+    announcements = Announcement.objects.all()
+    context = {
+        'announcements':announcements[::-1]
+    }
+    return render(request,"announcements.html",context) 
+
+def announcement(request,id):
+    announcement = Announcement.objects.get(id=id)
+    context = {
+        'announcement':announcement
+    }
+    return render(request,"announcement-page.html",context) 

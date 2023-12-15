@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+
+{% block title %}
+<title>SchoolApp | Home</title>
+{% endblock title %}
+
+
+{% block csscode %}
+<style>
+    body {
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif
+    }
+
+    h1 {
+        font-size: 3rem;
+        font-weight: 700;
+    }
+
+    .announce-section {
+        padding: 0 3rem;
+        margin: auto;
+        margin-top: .5rem;
+        width: 70%;
+
+    }
+
+    .title {
+        font-size: 1.5rem;
+        margin: 1rem 0;
+    }
+
+    .inner-content {
+        padding-left: 2rem;
+    }
+
+    .posted {
+        color: red;
+        font-size: .8rem;
+        font-weight: 600;
+    }
+
+    img{
+        max-height: 400px;
+        width: auto;
+    }
+
+    @media screen and (max-width:800px) {
+        .container-fluid {
+            padding: 0;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .header-image {
+            min-height: 25vh;
+            justify-content: center;
+        }
+
+        .announce-section {
+            padding: 0 0rem;
+            width: 90%;
+        }
+
+        .title {
+            font-size: 1rem;
+        }
+
+        .inner-content {
+            padding-left: .5rem;
+        }
+
+        p,
+        span,
+        a {
+            font-size: .8rem;
+            opacity: .9;
+        }
+
+        .posted {
+            font-size: .7rem;
+        }
+
+        img{
+            width: 100%;
+        }
+    }
+</style>
+{% endblock csscode %}
+
+
+{% block body %}
+<div class="container-fluid container-md ">
+    <div class="section">
+
+        <div class="announce-section">
+            <h2 class="title text-center">{{announcement.title}}</h2>
+
+            {% if announcement.image %}
+            <div class="img-thumbnail text-center">
+                <img src="{{announcement.image.url}}" class="my-auto mb-3" alt="">
+                {% endif %}
+                <div class="inner-content text-start">
+                    <p>{{announcement.content}}</p>
+                    <span>Uploaded by - <span class="fw-bold fst-italic">{{announcement.created_by}}</span></span> <br>
+                    <span class="posted small">{{announcement.created_at | timesince}} ago</span>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock body %}
+
+</body>
+
+</html>

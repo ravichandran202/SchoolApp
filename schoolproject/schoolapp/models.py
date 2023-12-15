@@ -44,3 +44,13 @@ class StudentDetails(models.Model):
     def __str__(self):
         return str(self.full_name)
     
+class Announcement(BasicInfo):
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='media/announcement',blank=True,null=True)
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    announce_to = models.IntegerField(default=0)  # 0 - indicates For Everyone
+
+    
+    def __str__(self):
+        return self.title
