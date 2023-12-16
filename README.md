@@ -1,4 +1,4 @@
-# Teacher-Student Collaboration Web App
+# Teacher-Student-Parent Collaboration Web App
 
 ## Overview
 
