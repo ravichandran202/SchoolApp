@@ -54,3 +54,12 @@ class Announcement(BasicInfo):
     
     def __str__(self):
         return self.title
+    
+class Comment(BasicInfo):
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    announcement_post = models.ForeignKey(Announcement, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return str(self.content[:15])
+    

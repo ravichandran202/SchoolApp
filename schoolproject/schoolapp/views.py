@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
 from .forms import AnnouncementForm
 from django.contrib.auth import update_session_auth_hash
-from .models import StudentDetails,Announcement
+from .models import StudentDetails,Announcement,Comment
 # Create your views here.
 def signin(request):
     if request.method == 'POST':
@@ -144,6 +144,7 @@ def profile_page(request,id):
         
         student.profile_image = image
         student.save()
+        
     context = {
         'user':StudentDetails.objects.get(id=id)
     }
@@ -188,7 +189,21 @@ def announcements(request):
 
 def announcement(request,id):
     announcement = Announcement.objects.get(id=id)
+    if request.method == 'POST':
+        content = request.POST['content']
+        new_comment = Comment(created_by = request.user, content = content, announcement_post = announcement)
+        new_comment.save()
+        
+    comments = Comment.objects.filter(announcement_post = announcement)[::-1]
+
     context = {
-        'announcement':announcement
+        'announcement':announcement,
+        'comments':comments
     }
     return render(request,"announcement-page.html",context) 
+
+def delete_comment(request,id):
+    comment = Comment.objects.get(id=id)
+    announcement = comment.announcement_post
+    comment.delete()
+    return redirect("announchment",announcement.id)

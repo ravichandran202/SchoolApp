@@ -11,5 +11,6 @@ urlpatterns = [
     path("create-announcement",views.create_announchment,name="create_announchment"),
     path("edit/announcement/<int:id>",views.edit_announchment,name="edit_announchment"),
     path("announcements",views.announcements,name="announchments"),
-    path("announcement/<int:id>",views.announcement,name="announchment")
+    path("announcement/<int:id>",views.announcement,name="announchment"),
+    path("delete/comment/<int:id>",views.delete_comment,name="delete_comment")
 ]
