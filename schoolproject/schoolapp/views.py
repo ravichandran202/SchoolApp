@@ -53,7 +53,7 @@ def create_new_user(request):
                 
                 user = User.objects.get(username=username)
                 
-                student = StudentDetails(student=user,full_name=full_name,roll_no=roll_num,stu_class=stu_class,date_of_birth=date_of_birth,gender=gender)
+                student = StudentDetails(user_id = user.id ,student=user,full_name=full_name,roll_no=roll_num,stu_class=stu_class,date_of_birth=date_of_birth,gender=gender)
                 student.save()
 
                 messages.info(request, "Account created successfully")
@@ -181,7 +181,18 @@ def edit_announchment(request,id):
 
 
 def announcements(request):
-    announcements = Announcement.objects.all()
+    user_id = request.user.id  #get current userid
+    student_details = StudentDetails.objects.get(user_id = user_id) #Get Student details 
+    student_class = student_details.stu_class #get student class
+    
+    #filter the announcements according to Student
+    announcements = Announcement.objects.raw(f"select * from schoolapp_announcement where announce_to = 0 or announce_to =  {student_class}")
+    print(announcements)  
+    
+    # if the user is staff get all announcements
+    if request.user.is_staff: 
+        announcements = Announcement.objects.all()
+        
     context = {
         'announcements':announcements[::-1]
     }
@@ -207,3 +218,4 @@ def delete_comment(request,id):
     announcement = comment.announcement_post
     comment.delete()
     return redirect("announchment",announcement.id)
+

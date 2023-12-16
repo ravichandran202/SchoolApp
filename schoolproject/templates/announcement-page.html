@@ -99,7 +99,8 @@
             width: 100%;
         }
 
-        .comment-section span, .comment-section a{
+        .comment-section span,
+        .comment-section a {
             font-size: .7rem;
         }
     }
@@ -146,7 +147,9 @@
                         <p class="comment">{{comment.content}}</p>
                         <span class="float-end"> - {{comment.created_by}}</span>
                         <span class="">{{comment.created_at|timesince}} ago</span><br>
+                        {% if request.user.is_staff or request.user == comment.created_by %}
                         <a href="{% url 'delete_comment' comment.id %}" class="text-danger">Delete</a>
+                        {% endif %}
                         <hr>
                     </div>
                     {% endfor %}

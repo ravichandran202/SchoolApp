@@ -7,6 +7,7 @@ class BasicInfo(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 class StudentDetails(models.Model):
+    user_id = models.IntegerField(blank = True, null=True)
     
     profile_image = models.ImageField(upload_to='media/profile',blank=True,null=True,default='default.jpg')
     
