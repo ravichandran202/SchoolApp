@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Teacher-Student Collaboration Web App is a Django-based web application designed to facilitate communication and collaboration between teachers, students, and parents. It allows teachers to manage classes, input grades, track attendance, and communicate with parents. Parents can access their child's academic information, receive updates, and communicate with teachers.
+The Teacher-Student-Parent Collaboration Web App is a Django-based web application designed to facilitate communication and collaboration between teachers, students, and parents. It allows teachers to manage classes, input grades, track attendance, and communicate with parents. Parents can access their child's academic information, receive updates, and communicate with teachers.
 
 ## Features
 
