@@ -1,0 +1,378 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+
+{% block title %}
+<title>SchoolApp | Home</title>
+{% endblock title %}
+
+
+{% block csscode %}
+<style>
+    #framechat {
+        width: 100%;
+        max-width: 1000px;
+        height: 100vh;
+        min-height: 300px;
+        max-height: 720px;
+        background: #E6EAEA;
+        box-shadow: 0px 0px 3px #bbbbbb;
+        border-radius: 5px;
+        overflow: hidden;
+
+        letter-spacing: 0.1px;
+
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004);
+        -webkit-font-smoothing: antialiased;
+        margin: 0 auto;
+    }
+
+    @media screen and (max-width: 360px) {
+        #framechat {
+            height: 100vh;
+        }
+    }
+
+
+
+    #framechat .content {
+        float: right;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        position: relative;
+    }
+
+    #framechat .content .header {
+        width: 100%;
+        height: 60px;
+        line-height: 45px;
+        background: #f5f5f5;
+        overflow: hidden;
+        box-shadow: -1px 1px 5px #e2e2e2;
+
+    }
+
+    .header img {
+        margin-top: 5px;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+    }
+
+    #framechat .content .header p {
+        font-weight: 700;
+        font-size: 18px;
+        margin-left: 15px;
+        padding-top: 5px;
+        text-transform: uppercase;
+        /* line-height: 43px; */
+    }
+
+    #framechat .content .messages {
+        height: auto;
+        min-height: calc(100% - 90px);
+        max-height: calc(100% - 90px);
+        overflow-y: scroll;
+        overflow-x: hidden;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    #framechat .content .messages ul {
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+    }
+
+
+    #framechat .content .messages::-webkit-scrollbar {
+        width: 8px;
+        background: transparent;
+    }
+
+    #framechat .content .messages::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.3);
+    }
+
+    #framechat .content .messages ul li {
+        display: inline-block;
+        clear: both;
+        float: left;
+        margin: 15px 15px 5px 15px;
+        width: calc(100% - 25px);
+        font-size: 0.9em;
+    }
+
+    #framechat .content .messages ul li:nth-last-child(1) {
+        margin-bottom: 20px;
+    }
+
+    #framechat .content .messages ul li.replies img {
+        margin: 6px 8px 0 0;
+    }
+
+    #framechat .content .messages ul li.replies p {  
+        background: #435f7a;
+        color: #f5f5f5;
+    }
+
+    #framechat .content .messages ul li.sent img {
+        float: right;
+        margin: 6px 0 0 8px;
+    }
+
+    #framechat .content .messages ul li.sent p {
+        background: #f5f5f5;
+        float: right;
+        color: #f5f5f5;
+    }
+
+    #framechat .content .messages ul li img {
+        width: 22px;
+        border-radius: 50%;
+        float: left;
+    }
+
+    #framechat .content .messages ul li p {
+        display: inline-block;
+        padding: 10px 15px;
+        border-radius: 20px;
+        max-width: 205px;
+        line-height: 130%;
+    }
+
+    @media screen and (min-width: 735px) {
+        #framechat .content .messages ul li p {
+            max-width: 300px;
+        }
+    }
+
+    #framechat .content .message-input {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        z-index: 99;
+        background: #E6EAEA;
+    }
+
+    #framechat .content .message-input .wrap {
+        position: relative;
+    }
+
+    #framechat .content .message-input .wrap .emoji-wysiwyg-editor {
+        font-family: "proxima-nova", "Source Sans Pro", sans-serif;
+        float: left;
+        border: none;
+        width: calc(100% - 45px);
+        padding: 14px;
+        font-size: 0.9em;
+        color: #32465a;
+        height: 45px;
+        outline: none;
+        background: #fff;
+        position: relative;
+        ;
+        overflow: hidden;
+    }
+
+
+
+    #framechat .content .message-input .wrap .emoji-picker-icon {
+        right: 55px;
+        top: 11px;
+        font-size: 22px;
+        opacity: 0.9;
+        color: #32465a;
+    }
+
+    #framechat .content .message-input .wrap .emoji-picker {
+        z-index: 5001;
+        bottom: 0;
+        border: none;
+        border-radius: 5px 0px 0px 0px;
+        box-shadow: none;
+        -webkit-box-shadow: none;
+    }
+
+    #framechat .content .message-input .wrap .emoji-menu {
+        bottom: 1px;
+        border: none;
+        box-shadow: none;
+        border-radius: 5px 0px 0px 0px;
+        -webkit-box-shadow: none;
+    }
+
+    #framechat .content .message-input .wrap .emoji-menu .emoji-items-wrap {
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    #framechat .content .message-input .wrap .emoji-menu .emoji-items-wrap::-webkit-scrollbar {
+        width: 5px;
+        background: transparent;
+    }
+
+    #framechat .content .message-input .wrap .emoji-menu .emoji-items-wrap::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.3);
+    }
+
+
+
+    #framechat .content .message-input .wrap .emoji-menu-tabs .emoji-menu-tab {
+        cursor: pointer;
+    }
+
+    #framechat .content .message-input .wrap button {
+        float: right;
+        border: none;
+        width: 45px;
+        height: 45px;
+        line-height: 42px;
+        cursor: pointer;
+        background: #32465a;
+        color: #f5f5f5;
+    }
+
+    #framechat .content .message-input .wrap button:hover {
+        background: #435f7a;
+    }
+
+    #framechat .content .message-input .wrap button:focus {
+        outline: none;
+    }
+</style>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+    integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet' type='text/css'>
+
+
+
+<!-- Begin emoji-picker JavaScript -->
+<link href='http://onesignal.github.io/emoji-picker/lib/css/emoji.css' rel='stylesheet' type='text/css'>
+<script src="http://onesignal.github.io/emoji-picker/lib/js/config.js"></script>
+<script src="http://onesignal.github.io/emoji-picker/lib/js/util.js"></script>
+<script src="http://onesignal.github.io/emoji-picker/lib/js/jquery.emojiarea.js"></script>
+<script src="http://onesignal.github.io/emoji-picker/lib/js/emoji-picker.js"></script>
+<script>
+    $(function () {
+        // Initializes and creates emoji set from sprite sheet
+        window.emojiPicker = new EmojiPicker({
+            emojiable_selector: '[data-emojiable=true]',
+            assetsPath: 'http://onesignal.github.io/emoji-picker/lib/img/',
+            popupButtonClasses: 'fa fa-smile-o'
+        });
+        // Finds all elements with `emojiable_selector` and converts them to rich emoji input fields
+        // You may want to delay this step if you have dynamically created input fields that appear later in the loading process
+        // It can be called as many times as necessary; previously converted input fields will not be converted again
+        window.emojiPicker.discover();
+    });
+</script>
+<!-- End emoji-picker JavaScript -->
+
+{% endblock csscode %}
+
+
+{% block body %}
+
+
+<div id="framechat">
+    <div class="content">
+        <div class="header d-flex px-2">
+            {% if receiver_bio.profile_image %}
+            <img src="{{receiver_bio.profile_image.url}}" alt="" />
+            {% else %}
+            <img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
+            {% endif %}
+            <p>{{receiver_bio.full_name}}</p>
+        </div>
+
+
+        <div class="messages">
+            <ul>
+                {% for message in messages %}
+                {% if message.sender == request.user %}
+                <li class="sent">
+                    {% if sender_bio.profile_image %}
+                    <img src="{{sender_bio.profile_image.url}}" alt="" />
+                    {% else %}
+                    <img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
+                    {% endif %}
+                    <p class="bg-danger">{{message.content}}</p>
+                </li>
+                {% else %}
+                <li class="replies">
+                    {% if receiver_bio.profile_image %}
+                    <img src="{{receiver_bio.profile_image.url}}" alt="" />
+                    {% else %}
+                    <img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
+                    {% endif %}
+                    <p>{{message.content}}</p>
+                </li>
+                {% endif %}
+                {% endfor %}
+
+            </ul>
+        </div>
+
+
+        <div class="message-input">
+            <div class="wrap">
+                <form method="post" action="{% url 'chat' receiver_bio.user_id %}">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        
+                        <input type="text" placeholder="Write your message..." data-emojiable="true"
+                            class="form-control" name="content" />
+
+                        <button class="submit bg-danger" type="submit"><i class="fa fa-paper-plane"
+                                aria-hidden="true"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--
+    JAVASCRIPT CODE
+-->
+<!-- <script>
+    $('.messages').animate({ scrollTop: $('.messages ul').height() }, "fast");
+    function newMessage() {
+        var message = $('.message-input input').val();
+        if ($.trim(message) == '') {
+            message = $('.message-input .emoji-wysiwyg-editor').html();
+            if ($.trim(message) == '') {
+                return false;
+            }
+        }
+
+
+        $('<li class="sent"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><p>' + message + '</p></li>').appendTo($('.messages ul'));
+        $('.message-input input').val('');
+        $('.message-input .emoji-wysiwyg-editor').html('');
+
+        $('.messages').animate({ scrollTop: $('.messages ul').height() }, "fast");
+    };
+
+    $('.submit').click(function () {
+        newMessage();
+    });
+
+    $('#framechat .content .message-input ').on('keydown', function (e) {
+        if (e.which == 13) {
+            newMessage();
+            return false;
+        }
+    });
+</script> -->
+{% endblock body %}

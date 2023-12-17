@@ -63,4 +63,14 @@ class Comment(BasicInfo):
     
     def __str__(self):
         return str(self.content[:15])
+
+class Message(BasicInfo):
+    sender = models.ForeignKey(User, related_name="sender",on_delete=models.CASCADE)
+    receiver = models.ForeignKey(User, related_name="receiver",on_delete=models.CASCADE)
+    senderid = models.IntegerField()
+    receiverid = models.IntegerField()
+    content = models.TextField()
+    
+    def __str__(self):
+        return str(self.sender) + " " +str(self.content[:10])
     

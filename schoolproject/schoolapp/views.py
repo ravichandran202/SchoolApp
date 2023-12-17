@@ -7,7 +7,8 @@ from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
 from .forms import AnnouncementForm
 from django.contrib.auth import update_session_auth_hash
-from .models import StudentDetails,Announcement,Comment
+from .models import StudentDetails,Announcement,Comment,Message
+from django.db.models import Q
 # Create your views here.
 def signin(request):
     if request.method == 'POST':
@@ -180,14 +181,16 @@ def edit_announchment(request,id):
     return render(request,"edit-announcement.html",context=context) 
 
 
+from django.db.models import Count
+
 def announcements(request):
+    result = Announcement.objects.all()
     user_id = request.user.id  #get current userid
     student_details = StudentDetails.objects.get(user_id = user_id) #Get Student details 
     student_class = student_details.stu_class #get student class
     
     #filter the announcements according to Student
     announcements = Announcement.objects.raw(f"select * from schoolapp_announcement where announce_to = 0 or announce_to =  {student_class}")
-    print(announcements)  
     
     # if the user is staff get all announcements
     if request.user.is_staff: 
@@ -219,3 +222,27 @@ def delete_comment(request,id):
     comment.delete()
     return redirect("announchment",announcement.id)
 
+def chat(request,id):
+    sender = request.user
+    receiver = User.objects.get(id=id)
+    receiver_bio = StudentDetails.objects.get(user_id = receiver.id)
+    sender_bio = StudentDetails.objects.get(user_id = sender.id)
+    
+    
+    if request.method == 'POST':
+        content = request.POST['content']
+        Message(sender=sender, receiver=receiver, senderid=sender.id, receiverid = receiver.id , content=content).save()
+    
+    messages = Message.objects.filter(sender=sender, receiver=receiver) | Message.objects.filter(sender=receiver, receiver=sender)
+    messages = messages.order_by('created_at')
+    # messages = Message.objects.filter( ( Q(sender=sender) & Q(receiver=receiver)  ) | ( Q(sender=receiver) & Q(receiver=sender) )).order_by('created_at')
+    
+    
+    context = {
+        "sender":sender,
+        "receiver_bio" : receiver_bio,
+        "sender_bio" : sender_bio,
+        "messages" : messages
+    }
+    
+    return render(request,"chatting-page.html",context=context)

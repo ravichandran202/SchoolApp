@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import StudentDetails,Announcement,Comment
+from .models import StudentDetails,Announcement,Comment,Message
 # Register your models here.
 
 @admin.register(StudentDetails)
@@ -13,3 +13,8 @@ class AnnouncementAdmin(admin.ModelAdmin):
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('created_by','content','announcement_post')
+
+@admin.register(Message)
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ('sender','receiver','content')
+
