@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+
+{% block title %}
+<title>SchoolApp | Home</title>
+{% endblock title %}
+
+
+{% block csscode %}
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: #ffffff;
+        font-family: Arial;
+    }
+
+    #container {
+        width: 65vw;
+        min-height: 100vh;
+        background: #020202;
+        margin: 0 auto;
+        font-size: 0;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+
+    aside {
+        width: 100%;
+        min-height: 100vh;
+        background-color: #eaeaea;
+        display: inline-block;
+        font-size: 15px;
+        vertical-align: top;
+    }
+
+
+    aside header {
+        padding: 30px 20px;
+        color: #000;
+        background-color: #fac4bb;
+    }
+
+    /* aside input {
+        width: 100%;
+        height: 50px;
+        line-height: 50px;
+        padding: 0 50px 0 20px;
+        background-color: #5e616a;
+        border: none;
+        border-radius: 3px;
+        color: #000;
+        background-image: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_search.png);
+        background-repeat: no-repeat;
+        background-position: 170px;
+        background-size: 40px;
+    }
+
+    aside input::placeholder {
+        color: #000;
+    } */
+
+    aside ul {
+        width: 100%;
+        padding-left: 0;
+        margin: 0;
+        list-style-type: none;
+        overflow-y: hidden;
+        /* min-height: 100vh; */
+
+    }
+
+    aside li {
+        padding: 10px 0;
+    }
+
+    aside li:hover {
+        background-color: #fac4bb;
+        cursor: pointer;
+    }
+
+    h2,
+    h3 {
+        margin: 0;
+    }
+
+    aside li img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-left: 20px;
+        margin-right: 8px;
+        margin-top: 5px;
+    }
+
+    aside li div {
+        display: inline-block;
+        vertical-align: top;
+        margin-top: 12px;
+    }
+
+    aside li h2 {
+        font-size: 14px;
+        color: #000;
+        font-weight: normal;
+        margin-bottom: 5px;
+    }
+
+    aside li h3 {
+        font-size: 12px;
+        color: #7e818a;
+        font-weight: normal;
+    }
+
+    .status {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 7px;
+    }
+
+    .green {
+        background-color: #58b666;
+    }
+
+    .orange {
+        background-color: #ff725d;
+    }
+
+    .blue {
+        background-color: #6fbced;
+        margin-right: 0;
+        margin-left: 7px;
+    }
+
+    @media screen and (max-width:600px) {
+        #container {
+            width: 100vw;
+        }
+    }
+</style>
+{% endblock csscode %}
+
+
+{% block body %}
+<div id="container">
+    <aside>
+        <header class="py-2 fw-bold text-uppercase">
+            <h5 class="fw-bold">My Chats</h5>
+        </header>
+        <ul>
+            {% for user in chat_users %}
+            <a href="{% url 'chat' user.user_id %}">
+                <li>
+                    {% if user.profile_image %}
+                    <img src="{{user.profile_image.url}}" alt="">
+                    {% else %}
+                    <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt="">
+                    {% endif %}
+                    <div>
+                        <h2>{{user.full_name}}</h2>
+                        <h3>
+                            <span class="status orange"></span>
+                            Teacher
+                        </h3>
+                    </div>
+                </li>
+            </a>
+            {% endfor %}
+        </ul>
+    </aside>
+</div>
+{% endblock body %}
+
+</body>
+
+</html>

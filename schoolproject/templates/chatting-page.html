@@ -54,6 +54,10 @@
 
     }
 
+    span{
+        font-size: .6rem;
+    }
+
     .header img {
         margin-top: 5px;
         width: 50px;
@@ -306,7 +310,8 @@
                     {% else %}
                     <img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
                     {% endif %}
-                    <p class="bg-danger">{{message.content}}</p>
+                    <p class="bg-danger">{{message.content}} <br><span>{{message.created_at|timesince}} ago</span></p>
+                    
                 </li>
                 {% else %}
                 <li class="replies">
@@ -315,7 +320,7 @@
                     {% else %}
                     <img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
                     {% endif %}
-                    <p>{{message.content}}</p>
+                    <p>{{message.content}} <br><span>{{message.created_at|timesince}} ago</span></p>
                 </li>
                 {% endif %}
                 {% endfor %}

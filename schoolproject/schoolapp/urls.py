@@ -13,5 +13,6 @@ urlpatterns = [
     path("announcements",views.announcements,name="announchments"),
     path("announcement/<int:id>",views.announcement,name="announchment"),
     path("delete/comment/<int:id>",views.delete_comment,name="delete_comment"),
-    path("chat/<int:id>",views.chat,name="chat")
+    path("chat/<int:id>",views.chat_page,name="chat"),
+    path("chat",views.chat,name="chat_list")
 ]

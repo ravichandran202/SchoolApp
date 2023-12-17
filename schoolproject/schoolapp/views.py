@@ -222,7 +222,7 @@ def delete_comment(request,id):
     comment.delete()
     return redirect("announchment",announcement.id)
 
-def chat(request,id):
+def chat_page(request,id):
     sender = request.user
     receiver = User.objects.get(id=id)
     receiver_bio = StudentDetails.objects.get(user_id = receiver.id)
@@ -246,3 +246,17 @@ def chat(request,id):
     }
     
     return render(request,"chatting-page.html",context=context)
+
+def chat(request):
+    current_user = request.user
+    query = f"select * from schoolapp_StudentDetails inner join schoolapp_Message on schoolapp_StudentDetails.user_id = schoolapp_Message.senderid where schoolapp_Message.senderid = {current_user.id} or schoolapp_Message.receiverid = {current_user.id}"
+    chat_users = StudentDetails.objects.raw(query)
+    chat_users_list = []
+    for user in chat_users:
+        if user not in chat_users_list and user.user_id != current_user.id:
+            chat_users_list.append(user)
+    
+    context = {
+        "chat_users" : chat_users_list
+    }
+    return render(request,"chat.html",context=context)
