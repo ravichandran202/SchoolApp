@@ -65,6 +65,41 @@ def create_new_user(request):
     return render(request, 'create-user-form.html')
 
 @login_required(login_url="signin")
+def create_new_teacher(request):
+    if request.method == 'POST':
+        username = request.POST['username'].lower()
+        password = request.POST['password']
+        password2 = request.POST['password2']
+        full_name = request.POST['full-name']
+        roll_num = 0
+        stu_class = 0
+        date_of_birth = request.POST['dob']
+        gender = request.POST['gender']
+
+        if password == password2:
+            if User.objects.filter(username=username).exists():
+                messages.error(request, "username Already Exists")
+                return redirect('create-teacher')
+            elif len(username)<6:
+                messages.error(request, "username must contain atleast 6 characters")
+                return redirect('create-teacher')
+            else:
+                user = User.objects.create_user(username, password=password, is_staff = True)
+                user.save()
+                
+                user = User.objects.get(username=username)
+                
+                student = StudentDetails(user_id = user.id ,student=user,full_name=full_name,roll_no=roll_num,stu_class=stu_class,date_of_birth=date_of_birth,gender=gender)
+                student.save()
+
+                messages.info(request, "Account created successfully")
+                return redirect('create-teacher')
+        else:
+            messages.error(request, "Please Enter same Password")
+            return redirect('create-teacher')
+    return render(request, 'create-teacher-form.html')
+
+@login_required(login_url="signin")
 def logout(request):
     auth.logout(request)
     return redirect('signin')
@@ -137,7 +172,7 @@ def change_password(request):
     })
 
 
-    
+@login_required(login_url="signin")  
 def profile_page(request,id):
     if request.method == 'POST':
         image = request.FILES['profile_image']
@@ -151,6 +186,7 @@ def profile_page(request,id):
     }
     return render(request,"profile-page.html",context=context)
 
+@login_required(login_url="signin")
 def create_announchment(request):
     if request.method == 'POST':
         image = None
@@ -166,6 +202,8 @@ def create_announchment(request):
         
     return render(request,"create-announcement.html")
 
+
+@login_required(login_url="signin")
 def edit_announchment(request,id):
     form_model = Announcement.objects.get(id=id)
     form = AnnouncementForm(instance= form_model)
@@ -183,6 +221,8 @@ def edit_announchment(request,id):
 
 from django.db.models import Count
 
+
+@login_required(login_url="signin")
 def announcements(request):
     result = Announcement.objects.all()
     user_id = request.user.id  #get current userid
@@ -201,6 +241,8 @@ def announcements(request):
     }
     return render(request,"announcements.html",context) 
 
+
+@login_required(login_url="signin")
 def announcement(request,id):
     announcement = Announcement.objects.get(id=id)
     if request.method == 'POST':
@@ -216,12 +258,15 @@ def announcement(request,id):
     }
     return render(request,"announcement-page.html",context) 
 
+
 def delete_comment(request,id):
     comment = Comment.objects.get(id=id)
     announcement = comment.announcement_post
     comment.delete()
     return redirect("announchment",announcement.id)
 
+
+@login_required(login_url="signin")
 def chat_page(request,id):
     sender = request.user
     receiver = User.objects.get(id=id)
@@ -237,7 +282,6 @@ def chat_page(request,id):
     messages = messages.order_by('created_at')
     # messages = Message.objects.filter( ( Q(sender=sender) & Q(receiver=receiver)  ) | ( Q(sender=receiver) & Q(receiver=sender) )).order_by('created_at')
     
-    
     context = {
         "sender":sender,
         "receiver_bio" : receiver_bio,
@@ -247,6 +291,8 @@ def chat_page(request,id):
     
     return render(request,"chatting-page.html",context=context)
 
+
+@login_required(login_url="signin")
 def chat(request):
     current_user = request.user
     query = f"select * from schoolapp_StudentDetails inner join schoolapp_Message on schoolapp_StudentDetails.user_id = schoolapp_Message.senderid where schoolapp_Message.senderid = {current_user.id} or schoolapp_Message.receiverid = {current_user.id}"
@@ -256,7 +302,16 @@ def chat(request):
         if user not in chat_users_list and user.user_id != current_user.id:
             chat_users_list.append(user)
     
+    if not request.user.is_staff:
+        chat_users_list = []
+        chat_users = User.objects.filter(is_staff = True)
+        for user in chat_users:
+            user_bio = StudentDetails.objects.get(user_id = user.id)
+            chat_users_list.append(user_bio)
+
+    
     context = {
         "chat_users" : chat_users_list
     }
     return render(request,"chat.html",context=context)
+

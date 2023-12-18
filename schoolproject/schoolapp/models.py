@@ -9,7 +9,7 @@ class BasicInfo(models.Model):
 class StudentDetails(models.Model):
     user_id = models.IntegerField(blank = True, null=True)
     
-    profile_image = models.ImageField(upload_to='media/profile',blank=True,null=True,default='default.jpg')
+    profile_image = models.ImageField(upload_to='media/profile',blank=True,null=True)
     
     student = models.OneToOneField(User, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=100)
