@@ -27,7 +27,11 @@ def signin(request):
 
 @login_required(login_url="signin")
 def home(request):
-    return render(request,"home.html")
+    user = request.user
+    user_bio = StudentDetails.objects.get(user_id = user.id)
+    return render(request,"home.html",{
+        "user":user_bio
+    })
 
 @login_required(login_url="signin")
 def create_new_user(request):

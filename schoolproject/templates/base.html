@@ -15,24 +15,192 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
         crossorigin="anonymous"></script>
-    {% block title %}
 
-    {% endblock title %}
-
-
+    <!--Side bar links-->
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
     {% block csscode %}
     <style>
         body {
             font-family: Arial, Helvetica, sans-serif;
         }
     </style>
+
     {% endblock csscode %}
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            text-decoration: none;
+
+        }
+
+        :root {
+            --accent-color: #fff;
+            --gradient-color: #FBFBFB;
+        }
+
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+
+        .sidebar {
+            top: 0;
+            position: fixed;
+            display: flex;
+            flex-direction: column;
+
+            width: 240px;
+            left: -240px;
+            height: 100%;
+            background-color: #fff;
+            transition: all .5s ease;
+            z-index: 20;
+        }
+
+        .sidebar header {
+            font-size: 28px !important;
+            color: #353535 !important;
+            line-height: 70px !important;
+            text-align: center !important;
+            background-color: #fff !important;
+            user-select: none !important;
+            font-family: 'Lato', sans-serif !important;
+        }
+
+        .sidebar a {
+            display: block !important;
+            height: 65px !important;
+            width: 100% !important;
+            color: #353535 !important;
+            line-height: 65px !important;
+            padding-left: 10px !important;
+            box-sizing: border-box !important;
+            text-decoration: none !important;
+            border-left: 5px solid transparent !important;
+            font-family: 'Lato', sans-serif !important;
+            transition: all .5s ease !important;
+            text-align: start;
+        }
+
+        .sidebar a.active,
+        .sidebar a:hover {
+            border-left: 5px solid var(--accent-color);
+            text-decoration: none;
+            color: #fff;
+            background: linear-gradient(to left, var(--accent-color), var(--gradient-color));
+        }
+
+        .sidebar a i {
+            font-size: 23px;
+            margin-right: 16px;
+        }
+
+        .sidebar a span {
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-align: left;
+        }
+
+        .sidebar-span {
+            color: #353535;
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 1rem;
+            text-align: start;
+        }
+
+        #check {
+            display: none;
+        }
+
+        label #btn,
+        label #cancel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            cursor: pointer;
+            color: #fc7873;
+            border-radius: 5px;
+            margin: 0px 0px;
+            font-size: 25px;
+            background-color: #ffffff;
+            box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, .5),
+                inset -7px -7px 10px 0px rgba(0, 0, 0, .1),
+                3.5px 3.5px 20px 0px rgba(0, 0, 0, .1),
+                2px 2px 5px 0px rgba(0, 0, 0, .1);
+            height: 40px;
+            width: 40px;
+            text-align: center;
+            text-shadow: 2px 2px 3px rgba(255, 255, 255, 0.5);
+            line-height: 45px;
+            transition: all .5s ease;
+            z-index: 20;
+        }
+
+        label #cancel {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #check:checked~.sidebar {
+            left: 0;
+        }
+
+        #check:checked~label #btn {
+            margin-left: 245px;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #check:checked~label #cancel {
+            margin-left: 245px;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sidebar>a.active,
+        .sidebar>a:hover:nth-child(even) {
+            --accent-color: #f7afa9;
+            --gradient-color: #fc7873;
+        }
+
+        .sidebar a.active,
+        .sidebar>a:hover:nth-child(odd) {
+            --accent-color: #f7afa9;
+            --gradient-color: #fc7873;
+        }
+
+
+        .frame {
+            width: 50%;
+            height: 30%;
+            margin: auto;
+            text-align: center;
+        }
+
+        @media screen and (max-width:600px) {
+            .sidebar-span {
+                color: #353535;
+                text-decoration: none;
+                font-weight: 400;
+                font-size: .8rem;
+            }
+        }
+    </style>
+    {% block title %}
+
+    {% endblock title %}
+
 
 </head>
 
 <body>
-    
-    {% include 'navbar.html' %}
+
+    {% include 'sidebar.html' %}
     {% block body %}
 
     {% endblock body %}
