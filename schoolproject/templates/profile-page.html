@@ -119,6 +119,10 @@
                         class="text-success text-decoration-none small">Edit Profile</a></button>
                 <button class="btn btn-outline-primary py-1 px-5"><a href="{% url 'change_password' %}"
                         class="text-primary text-decoration-none small">My Password</a></button>
+                {% if request.user.is_staff %}
+                <button class="btn btn-outline-danger py-2 px-5 w-75 mt-2"><a href="{% url 'change_password' %}"
+                        class="text-danger text-decoration-none">Delete User</a></button>
+                {% endif %}
             </div>
             <div class="d-none d-md-block left-section left-desktop text-center pt-3">
                 {%if user.profile_image %}
@@ -136,6 +140,10 @@
                 <button class="btn btn-primary py-2 px-5"><a href="{% url 'change_password' %}"
                         class="text-white text-decoration-none">My Password</a></button>
 
+                {% if request.user.is_staff %}
+                <button class="btn btn-danger py-2 px-5 w-75 mt-2"><a href="{% url 'change_password' %}"
+                        class="text-white text-decoration-none">Delete User</a></button>
+                {% endif %}
             </div>
         </div>
         <div class="col-12 col-md-9 m-0 p-0">

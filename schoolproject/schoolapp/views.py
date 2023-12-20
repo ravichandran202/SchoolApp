@@ -184,6 +184,7 @@ def profile_page(request,id):
         
         student.profile_image = image
         student.save()
+
         
     context = {
         'user':StudentDetails.objects.get(user_id=id)
@@ -319,3 +320,35 @@ def chat(request):
     }
     return render(request,"chat.html",context=context)
 
+def users_list(request):
+    users = StudentDetails.objects.all().order_by('stu_class').order_by('full_name')
+    
+    if request.method == 'POST':
+        sort_order = request.POST["sort-order"]
+        filter_order = request.POST["filter-order"]
+        
+        if filter_order == 'student':
+            users = users.filter(stu_class__gt = 0)
+        elif filter_order == 'staff':
+            users = users.filter(stu_class__lte = 0)
+        elif filter_order == 'all':
+            pass
+        else:
+            users = users.filter(stu_class = filter_order)
+        
+        
+        if sort_order == 'name':
+            users = users.order_by("full_name")
+        elif sort_order == 'class':
+            users = users.order_by("stu_class","full_name")
+        elif sort_order == 'gender':
+            users = users.order_by("-gender")
+        
+    else:
+        users = StudentDetails.objects.all().order_by('stu_class').order_by('full_name')
+    
+    
+    context = {
+        'users':users
+    }
+    return render(request,"display-users.html",context=context)
