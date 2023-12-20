@@ -55,7 +55,11 @@
         cursor: pointer;
     }
 
- 
+    .left-desktop {
+        background-image: linear-gradient(to left, #fa9d95, #fd5954);
+    }
+
+
 
     @media screen and (max-width:770px) {
         img {
@@ -91,8 +95,8 @@
     }
 
     .sidebar {
-            color: black !important;
-        }
+        color: black !important;
+    }
 </style>
 {% endblock csscode %}
 
@@ -111,10 +115,12 @@
                 {% endif %}
                 <br>
                 <h3 class="text-uppercase pt-2">{{user.full_name}}</h3>
-                <button class="btn btn-outline-danger py-1 px-5"><a href="{% url 'edit-student-profile' user.id %}"
-                        class="text-danger text-decoration-none small">Edit Profile</a></button>
+                <button class="btn btn-outline-success py-1 px-5"><a href="{% url 'edit-student-profile' user.id %}"
+                        class="text-success text-decoration-none small">Edit Profile</a></button>
+                <button class="btn btn-outline-primary py-1 px-5"><a href="{% url 'change_password' %}"
+                        class="text-primary text-decoration-none small">My Password</a></button>
             </div>
-            <div class="d-none d-md-block left-section bg-danger bg-gradient text-center pt-3">
+            <div class="d-none d-md-block left-section left-desktop text-center pt-3">
                 {%if user.profile_image %}
                 <img src="{{user.profile_image.url}}" class="p-0 m-0" alt="" width="100px" id="output-img1"
                     data-toggle="modal" data-target="#exampleModal"><br>
@@ -125,8 +131,10 @@
                 <br>
                 <h3 class="text-uppercase pt-2">{{user.full_name}}</h3>
 
-                <button class="btn btn-primary py-2 px-5"><a href="{% url 'edit-student-profile' user.id %}"
+                <button class="btn btn-success py-2 px-5"><a href="{% url 'edit-student-profile' user.id %}"
                         class="text-white text-decoration-none">Edit Profile</a></button>
+                <button class="btn btn-primary py-2 px-5"><a href="{% url 'change_password' %}"
+                        class="text-white text-decoration-none">My Password</a></button>
 
             </div>
         </div>

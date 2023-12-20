@@ -186,7 +186,7 @@ def profile_page(request,id):
         student.save()
         
     context = {
-        'user':StudentDetails.objects.get(id=id)
+        'user':StudentDetails.objects.get(user_id=id)
     }
     return render(request,"profile-page.html",context=context)
 
