@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import StudentDetails,Announcement,Comment,Message,Test
+from .models import StudentDetails,Announcement,Comment,Message,Test,TestMarks
 # Register your models here.
 
 @admin.register(StudentDetails)
@@ -21,3 +21,7 @@ class MessageAdmin(admin.ModelAdmin):
 @admin.register(Test)
 class TestAdmin(admin.ModelAdmin):
     list_display = ('title','test_for')
+
+@admin.register(TestMarks)
+class TestMarksAdmin(admin.ModelAdmin):
+    list_display = ('test_id','test_obj','student')

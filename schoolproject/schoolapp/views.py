@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
 from .forms import AnnouncementForm
 from django.contrib.auth import update_session_auth_hash
-from .models import StudentDetails,Announcement,Comment,Message,Test
+from .models import StudentDetails,Announcement,Comment,Message,Test,TestMarks
 from django.db.models import Q
 # Create your views here.
 def signin(request):
@@ -356,7 +356,63 @@ def users_list(request):
 def create_test(request):
     if request.method == 'POST':
         title = request.POST['title']
-        test_to = request.POST['test_to']
+        test_for = request.POST['test_to']
         description = request.POST['description']
-        Test(title=title,test_for=test_to,description=description).save()
+        total_marks = request.POST['total-marks'] 
+        test = Test(title=title,total_marks=total_marks,test_for=test_for,description=description)
+        test.save()
+        students = students = StudentDetails.objects.exclude(stu_class=0)
+        
+        if test_for != 0:
+            students = StudentDetails.objects.exclude(stu_class=0)
+        
+        
+        for student in students:
+            TestMarks(test_obj = test, test_id = test.id, student = student ).save()
     return render(request,"create-test.html")
+
+def display_tests(request):
+    tests_list  = Test.objects.all()[::-1]
+    if request.method == 'POST':
+        filter_order = request.POST["filter-order"]
+
+        if filter_order == 'all':
+            tests_list  = Test.objects.all()[::-1]
+        else:
+            tests_list = Test.objects.filter(test_for = filter_order)[::-1]
+        
+    else:
+        tests_list = Test.objects.all()[::-1]
+    
+    context = {
+        'tests_list' : tests_list
+    }
+    return render(request,"display-tests.html",context=context)
+
+def upload_marks(request,id):
+    test_marks_list = TestMarks.objects.filter(test_id=id)
+    
+    context = {
+        'test_marks_list' : test_marks_list
+    }
+    return render(request,"upload-marks.html",context=context)
+
+def update_marks(request,id):
+    student_test_marks = TestMarks.objects.get(id=id)
+    if request.method == 'POST':
+        kannada_marks = request.POST['kannada_marks']
+        english_marks = request.POST['english_marks']
+        hindi_marks = request.POST['hindi_marks']
+        science_marks = request.POST['science_marks']
+        maths_marks = request.POST['maths_marks']
+        social_marks = request.POST['social_marks']
+        
+        student_test_marks.kannada = kannada_marks
+        student_test_marks.english = english_marks
+        student_test_marks.hindi = hindi_marks
+        student_test_marks.science = science_marks
+        student_test_marks.maths = maths_marks
+        student_test_marks.social = social_marks
+        student_test_marks.save()
+        
+    return redirect("upload_marks",student_test_marks.test_id)

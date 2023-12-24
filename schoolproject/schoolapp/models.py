@@ -77,7 +77,23 @@ class Message(BasicInfo):
 class Test(BasicInfo):
     title = models.CharField(max_length=255)
     test_for = models.IntegerField()
+    total_marks = models.IntegerField(default=0)
     description = models.TextField()
     
     def __str__(self):
         return str(self.title) + " " +str(self.test_for)
+
+class TestMarks(BasicInfo):
+    test_obj = models.ForeignKey(Test,on_delete=models.CASCADE)
+    test_id = models.IntegerField()
+    student = models.ForeignKey(StudentDetails,on_delete=models.CASCADE )
+    kannada = models.FloatField(default=0)
+    english = models.FloatField(default=0)
+    hindi = models.FloatField(default=0)
+    science = models.FloatField(default=0)
+    maths = models.FloatField(default=0)
+    social = models.FloatField(default=0)
+    total_scored_marks = models.FloatField(default=0)
+    
+    def __str__(self):
+        return str(self.test_id ) + " " +str(self.student)

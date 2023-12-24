@@ -17,5 +17,8 @@ urlpatterns = [
     path("chat/<int:id>",views.chat_page,name="chat"),
     path("chat",views.chat,name="chat_list"),
     path("users-list",views.users_list,name="users_list"),
-    path("create-test",views.create_test,name="create_test")
+    path("create-test",views.create_test,name="create_test"),
+    path("display-tests",views.display_tests,name="display_tests"),
+    path("upload-marks/<int:id>",views.upload_marks,name="upload_marks"),
+    path("update-marks/<int:id>",views.update_marks,name="update_marks")
 ]
