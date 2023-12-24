@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
 from .forms import AnnouncementForm
 from django.contrib.auth import update_session_auth_hash
-from .models import StudentDetails,Announcement,Comment,Message
+from .models import StudentDetails,Announcement,Comment,Message,Test
 from django.db.models import Q
 # Create your views here.
 def signin(request):
@@ -352,3 +352,11 @@ def users_list(request):
         'users':users
     }
     return render(request,"display-users.html",context=context)
+
+def create_test(request):
+    if request.method == 'POST':
+        title = request.POST['title']
+        test_to = request.POST['test_to']
+        description = request.POST['description']
+        Test(title=title,test_for=test_to,description=description).save()
+    return render(request,"create-test.html")

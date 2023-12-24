@@ -16,5 +16,6 @@ urlpatterns = [
     path("delete/comment/<int:id>",views.delete_comment,name="delete_comment"),
     path("chat/<int:id>",views.chat_page,name="chat"),
     path("chat",views.chat,name="chat_list"),
-    path("users-list",views.users_list,name="users_list")
+    path("users-list",views.users_list,name="users_list"),
+    path("create-test",views.create_test,name="create_test")
 ]

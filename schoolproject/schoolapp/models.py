@@ -73,4 +73,11 @@ class Message(BasicInfo):
     
     def __str__(self):
         return str(self.sender) + " " +str(self.content[:10])
+
+class Test(BasicInfo):
+    title = models.CharField(max_length=255)
+    test_for = models.IntegerField()
+    description = models.TextField()
     
+    def __str__(self):
+        return str(self.title) + " " +str(self.test_for)
