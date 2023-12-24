@@ -300,7 +300,7 @@ def chat_page(request,id):
 @login_required(login_url="signin")
 def chat(request):
     current_user = request.user
-    query = f"select * from schoolapp_StudentDetails inner join schoolapp_Message on schoolapp_StudentDetails.user_id = schoolapp_Message.senderid where schoolapp_Message.senderid = {current_user.id} or schoolapp_Message.receiverid = {current_user.id}"
+    query = f"select * from schoolapp_StudentDetails inner join schoolapp_Message on schoolapp_StudentDetails.user_id = schoolapp_Message.senderid where schoolapp_Message.senderid = {current_user.id} or schoolapp_Message.receiverid = {current_user.id} or schoolapp_StudentDetails.stu_class=0"
     chat_users = StudentDetails.objects.raw(query)
     chat_users_list = []
     for user in chat_users:

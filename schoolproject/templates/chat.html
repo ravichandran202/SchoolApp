@@ -166,10 +166,17 @@
                     {% endif %}
                     <div>
                         <h2>{{user.full_name}}</h2>
+                        {%if user.student.is_staff %}
                         <h3>
                             <span class="status orange"></span>
                             Teacher
                         </h3>
+                        {% else %}
+                        <h3>
+                            <span class="status green"></span>
+                            Student
+                        </h3>
+                        {% endif %}
                     </div>
                 </li>
             </a>
