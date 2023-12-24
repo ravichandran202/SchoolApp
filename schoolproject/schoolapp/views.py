@@ -9,6 +9,7 @@ from .forms import AnnouncementForm
 from django.contrib.auth import update_session_auth_hash
 from .models import StudentDetails,Announcement,Comment,Message,Test,TestMarks
 from django.db.models import Q
+from datetime import datetime, timezone
 # Create your views here.
 def signin(request):
     if request.method == 'POST':
@@ -343,10 +344,8 @@ def users_list(request):
             users = users.order_by("stu_class","full_name")
         elif sort_order == 'gender':
             users = users.order_by("-gender")
-        
     else:
         users = StudentDetails.objects.all().order_by('stu_class').order_by('full_name')
-    
     
     context = {
         'users':users
@@ -359,13 +358,13 @@ def create_test(request):
         test_for = request.POST['test_to']
         description = request.POST['description']
         total_marks = request.POST['total-marks'] 
-        test = Test(title=title,total_marks=total_marks,test_for=test_for,description=description)
+        start_time = request.POST['start_time'] 
+        test = Test(title=title,total_marks=total_marks,test_for=test_for,description=description,start_at=start_time)
         test.save()
-        students = students = StudentDetails.objects.exclude(stu_class=0)
+        students = StudentDetails.objects.exclude(stu_class=0)
         
-        if test_for != 0:
-            students = StudentDetails.objects.exclude(stu_class=0)
-        
+        if int(test_for) != 0:
+            students = StudentDetails.objects.filter(stu_class=test_for)
         
         for student in students:
             TestMarks(test_obj = test, test_id = test.id, student = student ).save()
@@ -413,6 +412,44 @@ def update_marks(request,id):
         student_test_marks.science = science_marks
         student_test_marks.maths = maths_marks
         student_test_marks.social = social_marks
+        student_test_marks.total_scored_marks = float(kannada_marks)+float(english_marks)+float(hindi_marks)+float(science_marks)+float(maths_marks)+float(social_marks)
+        student_test_marks.total_marks = student_test_marks.test_obj.total_marks*6
+        
+        passing_marks = (35 / 100) * student_test_marks.test_obj.total_marks
+        marks_list = [kannada_marks,english_marks,hindi_marks,science_marks,maths_marks,social_marks]
+        is_pass = True
+        for subject_marks in marks_list:
+            if float(subject_marks)<passing_marks:
+                is_pass = False
+        
+        student_test_marks.is_pass = is_pass
         student_test_marks.save()
         
     return redirect("upload_marks",student_test_marks.test_id)
+
+def is_ready(model_time):
+    date_time = str(model_time)[:18]
+    date_object = datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")
+    if (date_object <= datetime.now()):
+        return True
+    return False
+    
+
+def student_display_tests(request):
+    user = request.user
+    student = StudentDetails.objects.get(user_id = user.id)
+    tests_list = TestMarks.objects.filter(student = student)
+    
+    for test in tests_list:
+        test_obj = test.test_obj
+        if is_ready(test_obj.start_at):
+            test_obj.is_ready = True
+        else:
+            test_obj.is_ready = False
+        test_obj.save()
+            
+    
+    context = {
+        "tests_list" : tests_list.order_by('created_at')[::-1]
+    }
+    return render(request,"student-display-tests.html",context=context)

@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+
+{% block title %}
+<title>SchoolApp | Home</title>
+{% endblock title %}
+
+
+{% block csscode %}
+<style>
+    .test-box {
+        padding: .5rem;
+        margin-top: .5rem;
+    }
+
+    .test-name {
+        margin-top: .5rem;
+        font-size: 16px;
+    }
+</style>
+{% endblock csscode %}
+
+
+{% block body %}
+<div class="container">
+    <div class="row">
+        {% for test in tests_list %}
+        
+        {% if test.test_obj.is_ready %}
+
+        {% if test.is_pass %}
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="test-box img-thumbnail bg-success-subtle">
+                <div class="test-box-head text-center">
+                    <img src="https://cdn-icons-png.flaticon.com/128/5454/5454607.png" alt="" class="w-25">
+                    <h3 class="test-name">{{test.test_obj.title}}</h3>
+                </div>
+                <div class="test-box-body text-center">
+                    {% with a=test.test_obj.total_marks b=6 %}
+                    <h2 class="text-success">{{test.total_scored_marks}} / {{test.total_marks}}</h2>
+                    {% endwith %}
+                </div>
+                <div class="test-box-footer">
+                    <a href="" class="btn btn-success btn-sm w-100">View</a>
+                </div>
+            </div>
+        </div>
+
+        {% else %}
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="test-box img-thumbnail bg-danger-subtle">
+                <div class="test-box-head text-center">
+                    <img src="https://cdn-icons-png.flaticon.com/128/1770/1770579.png" alt="" class="w-25">
+                    <h3 class="test-name">{{test.test_obj.title}}</h3>
+                </div>
+                <div class="test-box-body text-center">
+                    <h2 class="text-danger">{{test.total_scored_marks}} / {{test.total_marks}}</h2>
+                </div>
+                <div class="test-box-footer">
+                    <a href="" class="btn btn-danger btn-sm w-100">View</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+
+        {% else %}
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="test-box img-thumbnail bg-primary-subtle">
+                <div class="test-box-head text-center">
+                    <img src="https://cdn-icons-png.flaticon.com/128/10029/10029688.png" alt="" class="w-25">
+                    <h3 class="test-name">{{test.test_obj.title}}</h3>
+                </div>
+                <div class="test-box-body text-center">
+                    <p class="text-primary m-0 p-0 fw-bold">{{test.test_obj.start_at | date:"d/m/Y"}}</p>
+                    <p class="text-primary m-0 p-0">{{test.test_obj.start_at | date:"P"}}</p>
+                </div>
+                <div class="test-box-footer">
+                    <a href="" class="btn btn-primary btn-sm w-100">View</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+</body>
+
+</html>

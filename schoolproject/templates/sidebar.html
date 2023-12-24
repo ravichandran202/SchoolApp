@@ -43,8 +43,8 @@
         <span class="sidebar-span">New Teacher</span>
     </a>
     {% else %}
-    <a href="">
-        <i class="fas  fa-sliders-h"></i>
+    <a href="{% url 'student_display_tests' %}">
+        <i class="fas fa-sliders-h"></i>
         <span class="sidebar-span">My Tests</span>
     </a>
     {% endif %}

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import datetime
 # Create your models here.
 
 class BasicInfo(models.Model):
@@ -79,6 +80,8 @@ class Test(BasicInfo):
     test_for = models.IntegerField()
     total_marks = models.IntegerField(default=0)
     description = models.TextField()
+    start_at = models.DateTimeField(default = datetime.now())
+    is_ready = models.BooleanField(default = False)
     
     def __str__(self):
         return str(self.title) + " " +str(self.test_for)
@@ -94,6 +97,8 @@ class TestMarks(BasicInfo):
     maths = models.FloatField(default=0)
     social = models.FloatField(default=0)
     total_scored_marks = models.FloatField(default=0)
+    total_marks = models.IntegerField(default=0)
+    is_pass = models.BooleanField(default=False)
     
     def __str__(self):
         return str(self.test_id ) + " " +str(self.student)
