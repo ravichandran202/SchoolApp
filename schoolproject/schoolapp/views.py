@@ -396,6 +396,19 @@ def upload_marks(request,id):
     }
     return render(request,"upload-marks.html",context=context)
 
+def set_grade(score):
+    print(score)
+    if score>=90:
+        return "A+"
+    elif score>=80 and score<90:
+        return "A"
+    elif score>=65 and score<80:
+        return "B"
+    elif score>=35 and score<65:
+        return "C"
+    else:
+        return "F"
+
 def update_marks(request,id):
     student_test_marks = TestMarks.objects.get(id=id)
     if request.method == 'POST':
@@ -412,9 +425,11 @@ def update_marks(request,id):
         student_test_marks.science = science_marks
         student_test_marks.maths = maths_marks
         student_test_marks.social = social_marks
-        student_test_marks.total_scored_marks = float(kannada_marks)+float(english_marks)+float(hindi_marks)+float(science_marks)+float(maths_marks)+float(social_marks)
+        total_score = float(kannada_marks)+float(english_marks)+float(hindi_marks)+float(science_marks)+float(maths_marks)+float(social_marks)
+        student_test_marks.total_scored_marks = total_score
         student_test_marks.total_marks = student_test_marks.test_obj.total_marks*6
-        
+        grade_percentage = int((total_score / (student_test_marks.test_obj.total_marks*6))*100)
+        student_test_marks.grade = set_grade(grade_percentage)
         passing_marks = (35 / 100) * student_test_marks.test_obj.total_marks
         marks_list = [kannada_marks,english_marks,hindi_marks,science_marks,maths_marks,social_marks]
         is_pass = True

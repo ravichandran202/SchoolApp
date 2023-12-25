@@ -99,6 +99,7 @@ class TestMarks(BasicInfo):
     total_scored_marks = models.IntegerField(default=0)
     total_marks = models.IntegerField(default=0)
     is_pass = models.BooleanField(default=False)
+    grade = models.CharField(max_length=50,default="F")
     
     def __str__(self):
         return str(self.test_id ) + " " +str(self.student)

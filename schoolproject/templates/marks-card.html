@@ -62,7 +62,7 @@
             <div class="row">
                <div class="col-12 col-md-6 ">
                   <div class="d-flex flex-column justify-content-center align-items-center h-100">
-                     <h3 class="marks text-success">A</h3>
+                     <h3 class="marks text-success">{{test.grade}}</h3>
                      <h3 class="marks text-success">{{test.total_scored_marks}}/{{test.total_marks}}</h3>
                   </div>
                </div>
@@ -99,8 +99,8 @@
             </div>
          </div>
          <hr>
-         <div class="">
-            <button class="btn btn-success w-100">Download</button>
+         <div id="btn1">
+            <button onclick="window.print()" class="btn btn-success w-100">Download</button>
          </div>
       </div>
 {% else %}
@@ -119,7 +119,7 @@
             <div class="row">
                <div class="col-12 col-md-6 ">
                   <div class="d-flex flex-column justify-content-center align-items-center h-100">
-                     <h3 class="marks text-danger">A</h3>
+                     <h3 class="marks text-danger">F</h3>
                      <h3 class="marks text-danger">{{test.total_scored_marks}}/{{test.total_marks}}</h3>
                   </div>
                </div>
@@ -156,8 +156,8 @@
             </div>
          </div>
          <hr>
-         <div class="">
-            <button class="btn btn-danger w-100">Download</button>
+         <div id="btn2">
+            <button onclick="window.print()" class="btn btn-danger w-100">Download</button>
          </div>
       </div>
 {% endif %}
