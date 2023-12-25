@@ -21,5 +21,6 @@ urlpatterns = [
     path("display-tests",views.display_tests,name="display_tests"),
     path("upload-marks/<int:id>",views.upload_marks,name="upload_marks"),
     path("update-marks/<int:id>",views.update_marks,name="update_marks"),
-    path("student-display-tests",views.student_display_tests,name="student_display_tests")
+    path("student-display-tests",views.student_display_tests,name="student_display_tests"),
+    path("marks-card/<int:id>",views.marks_card,name="marks_card"),
 ]

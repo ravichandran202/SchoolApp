@@ -133,12 +133,12 @@
                                                     <td scope="col">{{test_marks.student}}</td>
                                                     <form action="{% url 'update_marks' test_marks.id  %}" method="post">
                                                         {% csrf_token %}
-                                                        <td><input type="number" class="form-control" scope="col" name="kannada_marks" value="{{test_marks.kannada}}"></td>
-                                                        <td><input type="number" class="form-control" scope="col" name="english_marks" value="{{test_marks.english}}"></td>
-                                                        <td><input type="number" class="form-control" scope="col" name="hindi_marks" value="{{test_marks.hindi}}"></td>
-                                                        <td><input type="number" class="form-control" scope="col" name="science_marks" value="{{test_marks.science}}"></td>
-                                                        <td><input type="number" class="form-control" scope="col" name="maths_marks" value="{{test_marks.maths}}"></td>
-                                                        <td><input type="number" class="form-control" scope="col" name="social_marks" value="{{test_marks.social}}"></td>
+                                                        <td><input type="number" max="{{test_marks.test_obj.total_marks}}" class="form-control" scope="col" name="kannada_marks" value="{{test_marks.kannada}}"></td>
+                                                        <td><input type="number" max="{{test_marks.test_obj.total_marks}}" class="form-control" scope="col" name="english_marks" value="{{test_marks.english}}"></td>
+                                                        <td><input type="number" max="{{test_marks.test_obj.total_marks}}" class="form-control" scope="col" name="hindi_marks" value="{{test_marks.hindi}}"></td>
+                                                        <td><input type="number" max="{{test_marks.test_obj.total_marks}}" class="form-control" scope="col" name="science_marks" value="{{test_marks.science}}"></td>
+                                                        <td><input type="number" max="{{test_marks.test_obj.total_marks}}" class="form-control" scope="col" name="maths_marks" value="{{test_marks.maths}}"></td>
+                                                        <td><input type="number" max="{{test_marks.test_obj.total_marks}}" class="form-control" scope="col" name="social_marks" value="{{test_marks.social}}"></td>
                                                     
                                                     <td>
                                                         <button type="submit" class="btn btn-outline-danger btn-sm">Submit</button>

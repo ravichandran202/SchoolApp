@@ -447,9 +447,15 @@ def student_display_tests(request):
         else:
             test_obj.is_ready = False
         test_obj.save()
-            
     
     context = {
         "tests_list" : tests_list.order_by('created_at')[::-1]
     }
     return render(request,"student-display-tests.html",context=context)
+
+def marks_card(request,id):
+    test = TestMarks.objects.get(id=id)
+    context = {
+        "test":test
+    }
+    return render(request,"marks-card.html",context=context)

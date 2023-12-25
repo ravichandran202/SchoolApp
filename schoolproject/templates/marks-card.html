@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+
+{% block title %}
+<title>SchoolApp | Home</title>
+{% endblock title %}
+
+
+{% block csscode %}
+<style>
+   .marks-card {
+      width: 500px;
+   }
+
+   .marks {
+      font-size: 3rem;
+   }
+
+   @media screen and (max-width:600px) {
+      .right-container h1 {
+         font-size: 1.5rem;
+      }
+
+      .marks-card {
+         width: auto;
+      }
+
+      .right-container h4 {
+         font-size: 1rem;
+      }
+
+      .marks {
+         font-size: 3rem;
+      }
+
+      table {
+         font-size: 1.1rem;
+      }
+   }
+</style>
+{% endblock csscode %}
+
+
+{% block body %}
+<div class="container">
+   <div class="d-flex justify-content-center align-items-center flex-column">
+      {% if test.is_pass %}
+      <div class="marks-card bg-success-subtle img-thumbnail p-3">
+         <div class="marks-card-head d-flex">
+            <div class="left-container">
+               <img src="https://cdn-icons-png.flaticon.com/128/5454/5454607.png" class="w-100">
+            </div>
+            <div class="right-container p-3 text-success">
+               <h1 class="text-uppercase">{{test.student}}</h1>
+               <h4 class="text-center text-uppercase">{{test.test_obj.title}}</h4>
+            </div>
+         </div>
+         <hr>
+         <div class="marks-card-body">
+            <div class="row">
+               <div class="col-12 col-md-6 ">
+                  <div class="d-flex flex-column justify-content-center align-items-center h-100">
+                     <h3 class="marks text-success">A</h3>
+                     <h3 class="marks text-success">{{test.total_scored_marks}}/{{test.total_marks}}</h3>
+                  </div>
+               </div>
+               <div class="col-12 col-md-6">
+                  <div class="">
+                     <table class="m-auto m-md-0">
+                        <tr>
+                           <td>English</td>
+                           <td class="ps-5 text-success fw-bold">{{test.english}}</td>
+                        </tr>
+                        <tr>
+                           <td>Kannada</td>
+                           <td class="ps-5 text-success fw-bold">{{test.kannada}}</td>
+                        </tr>
+                        <tr>
+                           <td>Hindi</td>
+                           <td class="ps-5 text-success fw-bold">{{test.hindi}}</td>
+                        </tr>
+                        <tr>
+                           <td>Science</td>
+                           <td class="ps-5 text-success fw-bold">{{test.science}}</td>
+                        </tr>
+                        <tr>
+                           <td>Maths</td>
+                           <td class="ps-5 text-success fw-bold">{{test.maths}}</td>
+                        </tr>
+                        <tr>
+                           <td>Social</td>
+                           <td class="ps-5 text-success fw-bold">{{test.social}}</td>
+                        </tr>
+                     </table>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <hr>
+         <div class="">
+            <button class="btn btn-success w-100">Download</button>
+         </div>
+      </div>
+{% else %}
+      <div class="marks-card bg-danger-subtle img-thumbnail p-3">
+         <div class="marks-card-head d-flex">
+            <div class="left-container">
+               <img src="https://cdn-icons-png.flaticon.com/128/1770/1770579.png" class="w-100">
+            </div>
+            <div class="right-container p-3 text-danger">
+               <h1 class="text-uppercase">{{test.student}}</h1>
+               <h4 class="text-center text-uppercase">{{test.test_obj.title}}</h4>
+            </div>
+         </div>
+         <hr>
+         <div class="marks-card-body">
+            <div class="row">
+               <div class="col-12 col-md-6 ">
+                  <div class="d-flex flex-column justify-content-center align-items-center h-100">
+                     <h3 class="marks text-danger">A</h3>
+                     <h3 class="marks text-danger">{{test.total_scored_marks}}/{{test.total_marks}}</h3>
+                  </div>
+               </div>
+               <div class="col-12 col-md-6">
+                  <div class="">
+                     <table class="m-auto m-md-0">
+                        <tr>
+                           <td>English</td>
+                           <td class="ps-5 text-danger fw-bold">{{test.english}}</td>
+                        </tr>
+                        <tr>
+                           <td>Kannada</td>
+                           <td class="ps-5 text-danger fw-bold">{{test.kannada}}</td>
+                        </tr>
+                        <tr>
+                           <td>Hindi</td>
+                           <td class="ps-5 text-danger fw-bold">{{test.hindi}}</td>
+                        </tr>
+                        <tr>
+                           <td>Science</td>
+                           <td class="ps-5 text-danger fw-bold">{{test.science}}</td>
+                        </tr>
+                        <tr>
+                           <td>Maths</td>
+                           <td class="ps-5 text-danger fw-bold">{{test.maths}}</td>
+                        </tr>
+                        <tr>
+                           <td>Social</td>
+                           <td class="ps-5 text-danger fw-bold">{{test.social}}</td>
+                        </tr>
+                     </table>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <hr>
+         <div class="">
+            <button class="btn btn-danger w-100">Download</button>
+         </div>
+      </div>
+{% endif %}
+   </div>
+</div>
+
+{% endblock %}
+
+</body>
+
+</html>
