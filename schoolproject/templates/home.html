@@ -571,7 +571,7 @@
       color: #fdfdfe;
    }
 
-   #home-image{
+   #home-image {
       width: 75%;
       float: right;
    }
@@ -637,10 +637,10 @@
          margin: 20px auto;
       }
 
-      #home-image{
-      width: 100%;
-      float:none;
-   }
+      #home-image {
+         width: 100%;
+         float: none;
+      }
 
    }
 
@@ -752,25 +752,24 @@
 <div class="">
    <div class="top_container bg-white ">
       <!-- header section strats -->
-      <header class="header_section shadow-lg">
+      <!-- <header class="header_section shadow-lg">
 
          <nav class="navbar navbar-expand-lg custom_nav-container navbar-light bg-light fixed-top px-2 shadow-sm z-1"
             style="color:#000">
-            <a class="navbar-brand" href="index.html">
-               <span class="text-dark">
-                  Fanadesh
-               </span>
-            </a>
-
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-               <div class="d-flex ml-auto flex-column flex-lg-row align-items-center">
-                  <ul class="navbar-nav  ">
-
-                  </ul>
-               </div>
+            <div class="">
+               <a class="navbar-brand" href="{% url 'home' %}">
+                  <span class="text-dark">
+                     Fanadesh
+                  </span>
+               </a>
             </div>
+            {%if not request.user.is_authenticated %}
+            <div class="">
+               <a href="{% url 'signin' %}" class="float-end btn btn-outline-danger btn-sm">Signin</a>
+            </div>
+            {% endif %}
          </nav>
-      </header>
+      </header> -->
 
       <section class="hero_section ">
          <div class="hero-container container">
@@ -786,15 +785,16 @@
                   dolore
                   magna aliqua. Ut enim ad minim veniam
                </p>
-               <div class="hero_btn-continer">
-                  <a href="" class="call_to-btn btn_white-border">
-                     Read More
-                  </a>
+               {% if request.user.is_authenticated %}
+               <div class="hero_btn-continer text-uppercase" style="font-size: 1.7rem;">
+                  WELCOME {{request.user.username}} !!!
                </div>
+               {% endif %}
             </div>
             <div class="hero_img-container">
                <div>
-                  <img src="https://cdn3.iconfinder.com/data/icons/business-people-40/376/Flat_Blue-09-18-512.png" alt="" id="home-image">
+                  <img src="https://cdn3.iconfinder.com/data/icons/business-people-40/376/Flat_Blue-09-18-512.png"
+                     alt="" id="home-image">
                </div>
             </div>
          </div>
@@ -802,7 +802,7 @@
    </div>
    <!-- end header section -->
 
-   
+
    <div class="common_style">
 
       <!-- about section -->
@@ -811,7 +811,9 @@
             <div class="row">
                <div class="col-md-6">
                   <div class="about_img-container">
-                     <img src="https://cdn1.iconfinder.com/data/icons/daily-business-illustrations/1000/illustration78-512.png" alt="" class="d-none d-md-inline">
+                     <img
+                        src="https://cdn1.iconfinder.com/data/icons/daily-business-illustrations/1000/illustration78-512.png"
+                        alt="" class="d-none d-md-inline">
                   </div>
                </div>
                <div class="col-md-6">
@@ -867,7 +869,9 @@
                </div>
                <div class="col-md-6">
                   <div class="admission_img-container">
-                     <img src="https://cdn0.iconfinder.com/data/icons/education-e-learning-3/5000/3_drawkit-education-elearning-online-school-512.png" alt="" class="d-none d-md-inline">
+                     <img
+                        src="https://cdn0.iconfinder.com/data/icons/education-e-learning-3/5000/3_drawkit-education-elearning-online-school-512.png"
+                        alt="" class="d-none d-md-inline">
                   </div>
                </div>
             </div>
@@ -884,7 +888,9 @@
             <div class="row">
                <div class="col-md-6">
                   <div class="why_img-container">
-                     <img src="https://cdn2.iconfinder.com/data/icons/jeduct-education-illustrations/2000/06.Presentation-512.png" alt="" class="d-none d-md-inline">
+                     <img
+                        src="https://cdn2.iconfinder.com/data/icons/jeduct-education-illustrations/2000/06.Presentation-512.png"
+                        alt="" class="d-none d-md-inline">
                   </div>
                </div>
                <div class="col-md-6">
@@ -940,25 +946,15 @@
                </div>
                <div class="col-md-6">
                   <div class="determine_img-container d-none d-md-inline">
-                     <img src="https://cdn2.iconfinder.com/data/icons/back-to-school-334/512/graduation_graduate_school_stickers_sticker-512.png" alt="">
+                     <img
+                        src="https://cdn2.iconfinder.com/data/icons/back-to-school-334/512/graduation_graduate_school_stickers_sticker-512.png"
+                        alt="">
                   </div>
                </div>
             </div>
          </div>
       </section>
-
-
-      <!-- end determine section -->
-
    </div>
-
-
-
-
-   <!-- end client section -->
-
-
-   <!-- contact section -->
 
    <section class="contact_section ">
 
@@ -1005,7 +1001,6 @@
          </div>
       </div>
    </section>
-
 </div>
 {% endblock %}
 

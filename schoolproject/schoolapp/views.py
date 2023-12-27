@@ -26,10 +26,11 @@ def signin(request):
 
     return render(request, "signin.html")
 
-@login_required(login_url="signin")
 def home(request):
-    user = request.user
-    user_bio = StudentDetails.objects.get(user_id = user.id)
+    user = user_bio = None
+    if request.user.is_authenticated:
+        user = request.user
+        user_bio = StudentDetails.objects.get(user_id = user.id)
     return render(request,"home.html",{
         "user":user_bio
     })
@@ -321,6 +322,7 @@ def chat(request):
     }
     return render(request,"chat.html",context=context)
 
+@login_required(login_url="signin")
 def users_list(request):
     users = StudentDetails.objects.all().order_by('stu_class').order_by('full_name')
     
@@ -352,6 +354,7 @@ def users_list(request):
     }
     return render(request,"display-users.html",context=context)
 
+@login_required(login_url="signin")
 def create_test(request):
     if request.method == 'POST':
         title = request.POST['title']
@@ -370,6 +373,7 @@ def create_test(request):
             TestMarks(test_obj = test, test_id = test.id, student = student ).save()
     return render(request,"create-test.html")
 
+@login_required(login_url="signin")
 def display_tests(request):
     tests_list  = Test.objects.all()[::-1]
     if request.method == 'POST':
@@ -388,6 +392,7 @@ def display_tests(request):
     }
     return render(request,"display-tests.html",context=context)
 
+@login_required(login_url="signin")
 def upload_marks(request,id):
     test_marks_list = TestMarks.objects.filter(test_id=id)
     
@@ -409,6 +414,7 @@ def set_grade(score):
     else:
         return "F"
 
+@login_required(login_url="signin")
 def update_marks(request,id):
     student_test_marks = TestMarks.objects.get(id=id)
     if request.method == 'POST':
@@ -442,6 +448,7 @@ def update_marks(request,id):
         
     return redirect("upload_marks",student_test_marks.test_id)
 
+
 def is_ready(model_time):
     date_time = str(model_time)[:18]
     date_object = datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")
@@ -449,7 +456,7 @@ def is_ready(model_time):
         return True
     return False
     
-
+@login_required(login_url="signin")
 def student_display_tests(request):
     user = request.user
     student = StudentDetails.objects.get(user_id = user.id)
@@ -468,6 +475,7 @@ def student_display_tests(request):
     }
     return render(request,"student-display-tests.html",context=context)
 
+@login_required(login_url="signin")
 def marks_card(request,id):
     test = TestMarks.objects.get(id=id)
     context = {
