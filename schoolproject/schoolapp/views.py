@@ -9,7 +9,7 @@ from .forms import AnnouncementForm
 from django.contrib.auth import update_session_auth_hash
 from .models import StudentDetails,Announcement,Comment,Message,Test,TestMarks
 from django.db.models import Q
-from datetime import datetime, timezone
+from datetime import datetime
 # Create your views here.
 def signin(request):
     if request.method == 'POST':

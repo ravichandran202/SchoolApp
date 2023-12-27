@@ -103,3 +103,11 @@ class TestMarks(BasicInfo):
     
     def __str__(self):
         return str(self.test_id ) + " " +str(self.student)
+    
+class UserQuery(BasicInfo):
+    username = models.CharField(max_length = 250)
+    phone = models.CharField(max_length = 150)
+    description = models.TextField()
+    
+    def __str__(self):
+        return str(self.username) + str(self.phone)

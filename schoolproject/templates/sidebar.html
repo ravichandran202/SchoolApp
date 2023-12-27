@@ -1,3 +1,20 @@
+
+<!-- header section strats -->
+<header class="header_section shadow-lg">
+
+    <nav class="navbar navbar-expand-lg custom_nav-container navbar-light bg-light fixed-top px-2 shadow-sm z-1"
+       style="color:#000">
+       <div>
+        <a class="navbar-brand text-center" href="index.html">
+            <span class="text-dark">
+               Fanadesh
+            </span>
+         </a>
+       </div>
+    </nav>
+ </header>
+
+
 <input type="checkbox" id="check">
 
 {% if request.user.is_authenticated %}
@@ -7,7 +24,7 @@
 </label>
 {% endif %}
 
-<div class="sidebar">
+<div class="sidebar fixed-top z-3">
     <header>Menu</header>
     <a href="{% url 'home' %}">
         <i class="fas fa-qrcode"></i>
