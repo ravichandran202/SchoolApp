@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
 from .forms import AnnouncementForm
 from django.contrib.auth import update_session_auth_hash
-from .models import StudentDetails,Announcement,Comment,Message,Test,TestMarks
+from .models import StudentDetails,Announcement,Comment,Message,Test,TestMarks,UserQuery
 from django.db.models import Q
 from datetime import datetime
 # Create your views here.
@@ -31,6 +31,15 @@ def home(request):
     if request.user.is_authenticated:
         user = request.user
         user_bio = StudentDetails.objects.get(user_id = user.id)
+    
+    if request.method == 'POST':
+        name = request.POST['name']
+        email = request.POST['email']
+        phone = request.POST['phone']
+        message = request.POST['message']
+        
+        UserQuery(username =  name,email= email,phone=phone,description=message).save()
+        
     return render(request,"home.html",{
         "user":user_bio
     })

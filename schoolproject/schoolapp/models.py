@@ -106,6 +106,7 @@ class TestMarks(BasicInfo):
     
 class UserQuery(BasicInfo):
     username = models.CharField(max_length = 250)
+    email = models.EmailField(blank=True)
     phone = models.CharField(max_length = 150)
     description = models.TextField()
     

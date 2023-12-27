@@ -744,6 +744,32 @@
       }
 
    }
+
+
+   .mapouter {
+      position: relative;
+      height: 400px;
+      width: 100%;
+      background: #fff;
+   }
+
+   .maprouter a {
+      color: #fff !important;
+      position: absolute !important;
+      top: 0 !important;
+      z-index: 0 !important;
+   }
+
+   .gmap_canvas {
+      overflow: hidden;
+      height: 400px;
+      width: 100%;
+   }
+
+   .gmap_canvas iframe {
+      position: relative;
+      z-index: 2
+   }
 </style>
 {% endblock csscode %}
 
@@ -771,7 +797,7 @@
          </nav>
       </header> -->
 
-      <section class="hero_section ">
+      <section class="hero_section " style="margin-top: 2rem;">
          <div class="hero-container container">
             <div class="hero_detail-box">
                <h1>
@@ -829,11 +855,6 @@
                         aliquip
                         ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
                      </p>
-                     <div class="">
-                        <a href="" class="call_to-btn btn_white-border">
-                           Read More
-                        </a>
-                     </div>
                   </div>
                </div>
             </div>
@@ -860,11 +881,6 @@
                         aliquip
                         ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
                      </p>
-                     <div class="">
-                        <a href="" class="call_to-btn btn_white-border">
-                           Read More
-                        </a>
-                     </div>
                   </div>
                </div>
                <div class="col-md-6">
@@ -906,11 +922,6 @@
                         aliquip
                         ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
                      </p>
-                     <div class="">
-                        <a href="" class="call_to-btn btn_white-border">
-                           Read More
-                        </a>
-                     </div>
                   </div>
                </div>
             </div>
@@ -937,11 +948,6 @@
                         aliquip
                         ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
                      </p>
-                     <div class="">
-                        <a href="" class="call_to-btn btn_white-border">
-                           Read More
-                        </a>
-                     </div>
                   </div>
                </div>
                <div class="col-md-6">
@@ -967,20 +973,21 @@
                      Contact Us
                   </h2>
                </div>
-               <form action="">
+               <form action="" method="post">
+                  {% csrf_token %}
                   <div class="contact_form-container">
                      <div>
                         <div>
-                           <input type="text" placeholder="Name">
+                           <input type="text" placeholder="Name" name="name" required>
                         </div>
                         <div>
-                           <input type="email" placeholder="Email">
+                           <input type="email" placeholder="Email"  name="email">
                         </div>
                         <div>
-                           <input type="text" placeholder="Phone Number">
+                           <input type="text" placeholder="Phone Number" name="phone" required>
                         </div>
                         <div class="mt-5">
-                           <input type="text" placeholder="Message">
+                           <input type="text" placeholder="Message" name="message">
                         </div>
                         <div class="mt-5">
                            <button type="submit">
@@ -995,7 +1002,13 @@
             </div>
             <div class="col-md-6">
                <div class="contact_img-box">
-                  <img src="images/students.jpg" alt="">
+                  <div class="mapouter">
+                     <div class="gmap_canvas w-100 pt-3 pt-md-0 "><iframe
+                           src="https://maps.google.com/maps?q=maharaja%20institute%20of%20technology%20&amp;t=k&amp;z=15&amp;ie=UTF8&amp;iwloc=&amp;output=embed"
+                           frameborder="0" scrolling="no" style="width: 100%; height: 400px;"></iframe>
+
+                     </div>
+                  </div>
                </div>
             </div>
          </div>
