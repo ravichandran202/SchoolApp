@@ -10,7 +10,27 @@ from django.contrib.auth import update_session_auth_hash
 from .models import StudentDetails,Announcement,Comment,Message,Test,TestMarks,UserQuery
 from django.db.models import Q
 from datetime import datetime
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.conf import settings
+
 # Create your views here.
+
+def account_created_html_email(message):
+    subject = 'School App - New Enquiry'
+    userquery = message
+    context = {
+        'userquery' : userquery
+    }
+    html_message = render_to_string('send-email.html',context=context)
+    message = strip_tags(html_message)
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = ["ravichandrants202@gmail.com",]
+    
+    send_mail( subject, message, email_from, recipient_list ,html_message=html_message)
+
+
 def signin(request):
     if request.method == 'POST':
         username = request.POST['username'].lower()
@@ -38,7 +58,9 @@ def home(request):
         phone = request.POST['phone']
         message = request.POST['message']
         
-        UserQuery(username =  name,email= email,phone=phone,description=message).save()
+        userquery = UserQuery(username =  name,email= email,phone=phone,description=message)
+        userquery.save()
+        account_created_html_email(userquery)
         
     return render(request,"home.html",{
         "user":user_bio
