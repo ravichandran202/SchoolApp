@@ -19,6 +19,7 @@ urlpatterns = [
     path("users-list",views.users_list,name="users_list"),
     path("create-test",views.create_test,name="create_test"),
     path("display-tests",views.display_tests,name="display_tests"),
+    path("delete-test/<int:id>",views.delete_test,name="delete_test"),
     path("upload-marks/<int:id>",views.upload_marks,name="upload_marks"),
     path("update-marks/<int:id>",views.update_marks,name="update_marks"),
     path("student-display-tests",views.student_display_tests,name="student_display_tests"),

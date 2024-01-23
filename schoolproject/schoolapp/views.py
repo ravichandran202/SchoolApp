@@ -424,6 +424,15 @@ def display_tests(request):
     return render(request,"display-tests.html",context=context)
 
 @login_required(login_url="signin")
+def delete_test(request,id):
+    test_obj = Test.objects.filter(id=id)
+    try:
+        test_obj.delete()
+    except:
+        pass
+    return redirect("display_tests")
+
+@login_required(login_url="signin")
 def upload_marks(request,id):
     test_marks_list = TestMarks.objects.filter(test_id=id)
     
