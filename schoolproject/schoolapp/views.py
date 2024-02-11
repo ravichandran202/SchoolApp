@@ -1,19 +1,19 @@
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, update_session_auth_hash
 from django.contrib.auth.models import User, auth
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
-from .forms import AnnouncementForm
-from django.contrib.auth import update_session_auth_hash
-from .models import StudentDetails,Announcement,Comment,Message,Test,TestMarks,UserQuery
-from django.db.models import Q
-from datetime import datetime
+from django.contrib import messages
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
+from django.db.models import Q
+from .forms import AnnouncementForm
+from .models import StudentDetails,Announcement,Comment,Message,Test,TestMarks,UserQuery
+from datetime import datetime
+
 
 # Create your views here.
 
@@ -23,13 +23,25 @@ def account_created_html_email(message):
     context = {
         'userquery' : userquery
     }
+    
+    #send to Admin
     html_message = render_to_string('send-email.html',context=context)
     message = strip_tags(html_message)
     email_from = settings.EMAIL_HOST_USER
     recipient_list = ["ravichandrants202@gmail.com",]
     
-    send_mail( subject, message, email_from, recipient_list ,html_message=html_message)
-
+    try:
+        send_mail( subject, message, email_from, recipient_list ,html_message=html_message)
+    except:
+        pass
+    
+    #send to user
+    recipient_list = [userquery.email]
+    html_message = render_to_string('home-email.html',context=context)
+    try:
+        send_mail( subject, message, email_from, recipient_list ,html_message=html_message)
+    except:
+        pass
 
 def signin(request):
     if request.method == 'POST':
