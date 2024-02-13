@@ -106,8 +106,11 @@
 {% block body %}
 <div class="container-fluid container-md ">
     <div class="section">
-        <div class="header-image">
+        <div class="header-image d-flex flex-column">
             <h1>ANNOUNCEMENTS</h1><br>
+            {% if request.user.is_staff %}
+            <a href="{% url 'create_announchment' %}" class="btn btn-danger">Create Announcement</a>
+            {% endif %}
         </div>
 
         {% for announcement in announcements %}

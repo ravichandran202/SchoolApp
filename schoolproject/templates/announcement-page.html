@@ -76,7 +76,7 @@
         }
 
         .title {
-            font-size: 1rem;
+            font-size: 1.2rem;
         }
 
         .inner-content {
@@ -109,14 +109,15 @@
 
 
 {% block body %}
-<div class="container-fluid container-md "style="margin-top: 2rem;">
+<div class="container-fluid container-md " style="margin-top: 2rem;">
     <div class="section">
 
         <div class="row">
             <div class="col-12 col-md-8 announce-section">
-                <h2 class="title text-center">{{announcement.title}}</h2>
-
-
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="title fw-bold">{{announcement.title}}</h2>
+                    <a href="{% url 'edit_announchment' announcement.id %}" class="btn btn-sm btn-outline-danger rounded px-3 ">Edit</a>
+                </div>
                 <div class="img-thumbnail text-center">
                     {% if announcement.image %}
                     <img src="{{announcement.image.url}}" class="my-auto mb-3 w-100" alt="">
@@ -126,7 +127,6 @@
                         <span>Uploaded by - <span class="fw-bold fst-italic">{{announcement.created_by}}</span></span>
                         <br>
                         <span class="posted small">{{announcement.created_at | timesince}} ago</span>
-
                     </div>
                 </div>
             </div>

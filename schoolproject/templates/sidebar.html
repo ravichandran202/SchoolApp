@@ -32,17 +32,17 @@
 <div class="sidebar fixed-top z-3">
     <header>Menu</header>
     <a href="{% url 'home' %}">
-        <i class="fas fa-qrcode"></i>
+        <i class="fas fa-home"></i>
         <span class="sidebar-span">Home</span>
     </a>
 
     <a href="{% url 'chat_list' %}">
-        <i class="fas fa-calendar"></i>
+        <i class="fas fa-comments"></i>
         <span class="sidebar-span">Chats</span>
     </a>
 
     <a href="{% url 'announchments' %}">
-        <i class="fas fa-stream"></i>
+        <i class="fas fa-bullhorn"></i>
         <span class="sidebar-span">Announcements</span>
     </a>
 
@@ -53,15 +53,15 @@
     </a>
 
     <a href="{% url 'users_list' %}">
-        <i class="fas fa-link"></i>
+        <i class="fas fa-users"></i>
         <span class="sidebar-span">List Users</span>
     </a>
     <a href="{% url 'create-user' %}">
-        <i class="fas fa-link"></i>
+        <i class="fas fa-graduation-cap"></i>
         <span class="sidebar-span">New Student</span>
     </a>
     <a href="{% url 'create-teacher' %}">
-        <i class="fas  fa-sliders-h"></i>
+        <i class="fas  fa-user-plus"></i>
         <span class="sidebar-span">New Teacher</span>
     </a>
     {% else %}
@@ -73,12 +73,12 @@
 
     {% if request.user.is_authenticated %}
     <a href="{% url 'profile_page' request.user.id %}">
-        <i class="far fa-envelope"></i>
+        <i class="fas fa-user-circle"></i>
         <span class="sidebar-span">Profile</span>
     </a>
     {% endif %}
     <a href="{% url 'logout' %}">
-        <i class="far fa-question-circle"></i>
+        <i class="fas fa-window-close"></i>
         <span class="sidebar-span">Logout</span>
     </a>
 </div>
