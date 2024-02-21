@@ -154,7 +154,6 @@ def logout(request):
     return redirect('signin')
 
 @login_required(login_url="signin")
-
 def edit_student_profile(request,id):
     if request.method == 'POST':
         # image = None
