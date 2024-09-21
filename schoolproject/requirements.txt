@@ -17,7 +17,6 @@ pango==0.0.1
 Pillow==10.0.1
 pipenv==2023.9.8
 platformdirs==3.10.0
-psycopg2-binary==2.9.8
 pycparser==2.21
 pydyf==0.8.0
 pyphen==0.14.0
