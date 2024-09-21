@@ -25,3 +25,6 @@ urlpatterns = [
     path("student-display-tests",views.student_display_tests,name="student_display_tests"),
     path("marks-card/<int:id>",views.marks_card,name="marks_card"),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
