@@ -1,0 +1,2006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DSA Problem Tracker</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Custom CSS -->
+  <style>
+    :root {
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --bg: #f8fafc;
+      --text: #1e293b;
+      --text-light: #64748b;
+      --border: #e2e8f0;
+      --row-hover: #f1f5f9;
+      --meter-background: #e2e8f0;
+      --meter-fill: #3b82f6;
+      --sidebar-width: 280px;
+      --sidebar-bg: #ffffff;
+      --sidebar-text: #1e293b;
+      --sidebar-active-bg: #f1f5f9;
+      --sidebar-hover-bg: #f8fafc;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      font-weight: 400;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: var(--sidebar-width);
+      background-color: var(--sidebar-bg);
+      color: var(--sidebar-text);
+      padding: 1rem;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+      z-index: 1000;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      overflow-y: auto;
+    }
+
+    .sidebar.active {
+      transform: translateX(0);
+    }
+
+    .sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .sidebar-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .sidebar-header {
+      padding: 1rem 0.5rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-header h3 {
+      font-weight: 700;
+      margin-bottom: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .sidebar-menu li {
+      margin-bottom: 0.25rem;
+    }
+
+    .sidebar-menu a {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      color: var(--sidebar-text);
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .sidebar-menu a:hover {
+      background-color: var(--sidebar-hover-bg);
+      color: var(--primary);
+    }
+
+    .sidebar-menu a.active {
+      background-color: var(--sidebar-active-bg);
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    .sidebar-menu a i {
+      margin-right: 0.75rem;
+      width: 20px;
+      text-align: center;
+    }
+
+    .sidebar-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 1rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-light);
+    }
+
+    /* Main Content Styles */
+    .main-content {
+      padding: 1rem;
+      transition: transform 0.3s ease;
+    }
+
+    /* Mobile Menu Toggle Button */
+    .menu-toggle {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 1100;
+      background: var(--primary);
+      color: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .menu-toggle:hover {
+      background: var(--primary-hover);
+    }
+
+    /* Status Styles */
+    .status {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      vertical-align: middle;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .status-solved {
+      background-color: var(--success);
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+    }
+
+    .status-attempted {
+      background-color: var(--warning);
+      box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+    }
+
+    .status-unsolved {
+      background-color: #cbd5e1;
+      box-shadow: 0 0 0 2px rgba(203, 213, 225, 0.2);
+    }
+
+    .problem-title {
+      font-weight: 500;
+      color: var(--text);
+      transition: color 0.2s;
+    }
+
+    .problem-title:hover {
+      color: var(--primary);
+    }
+
+    .difficulty {
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 5px 10px;
+      border-radius: 20px;
+      display: inline-block;
+      min-width: 70px;
+      text-align: center;
+    }
+
+    .easy {
+      background-color: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+    }
+
+    .medium {
+      background-color: rgba(245, 158, 11, 0.1);
+      color: var(--warning);
+    }
+
+    .hard {
+      background-color: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+    }
+
+    .problems-table {
+      background-color: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .problems-table thead th {
+      background-color: #f1f5f9;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 0.75rem;
+      color: var(--text-light);
+      padding: 0.75rem 1rem;
+      white-space: nowrap;
+    }
+
+    .problems-table tbody tr:hover {
+      background-color: var(--row-hover);
+    }
+
+    .problems-table td {
+      padding: 1rem;
+      vertical-align: middle;
+      border-top: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    .filter-scroll {
+      overflow-x: auto;
+      white-space: nowrap;
+      padding-bottom: 10px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .section-header {
+      background-color: white;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      margin: 1.5rem 0 0.5rem;
+      cursor: pointer;
+      border-left: 4px solid var(--primary);
+      transition: all 0.2s;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .section-header:hover {
+      background-color: #f8fafc;
+    }
+
+    .section-header h3 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .section-header .badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.35em 0.65em;
+    }
+
+    .section-content {
+      padding: 0;
+      display: none; /* Collapsed by default */
+    }
+
+    /* Progress Overview Section */
+    .progress-overview {
+      background-color: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .progress-overview h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+    }
+
+    .progress-item {
+      margin-bottom: 1.5rem;
+    }
+
+    .progress-title {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .progress-count {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .progress-bar-container {
+      height: 8px;
+      background-color: var(--meter-background);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+
+    .progress-total .progress-bar-fill {
+      background-color: var(--primary);
+    }
+
+    .progress-easy .progress-bar-fill {
+      background-color: var(--success);
+    }
+
+    .progress-medium .progress-bar-fill {
+      background-color: var(--warning);
+    }
+
+    .progress-hard .progress-bar-fill {
+      background-color: var(--danger);
+    }
+
+    /* Digital Meter UI */
+    .digital-meter {
+      background-color: #f1f5f9;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .digital-meter-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-light);
+      margin-bottom: 0.5rem;
+    }
+
+    .digital-meter-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      line-height: 1;
+    }
+
+    .digital-meter-total {
+      font-size: 1rem;
+      color: var(--text-light);
+    }
+
+    /* Notes Section */
+    .notes-section {
+      background-color: white;
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .notes-section h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: var(--text);
+    }
+
+    .notes-content {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+      body {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+      }
+
+      .main-content {
+        padding: 0.75rem;
+      }
+
+      .search-container {
+        flex-direction: column;
+      }
+
+      .problems-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 8px;
+      }
+
+      .problems-table {
+        min-width: 800px;
+      }
+
+      .problems-table td, 
+      .problems-table th {
+        padding: 0.75rem;
+      }
+
+      .section-header h3 {
+        font-size: 0.9rem;
+      }
+
+      .digital-meter {
+        padding: 1rem;
+      }
+
+      .digital-meter-value {
+        font-size: 2rem;
+      }
+
+      .progress-overview {
+        padding: 1rem;
+      }
+    }
+
+    /* Desktop styles */
+    @media (min-width: 992px) {
+      .sidebar {
+        transform: translateX(0);
+      }
+
+      .menu-toggle {
+        display: none;
+      }
+
+      .sidebar-overlay {
+        display: none;
+      }
+
+      .main-content {
+        margin-left: var(--sidebar-width);
+      }
+    }
+
+    /* Premium look enhancements */
+    .header-container {
+      background-color: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .header-title {
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 0.5rem;
+    }
+
+    .header-subtitle {
+      font-weight: 400;
+      color: var(--text-light);
+    }
+
+    .btn-sm {
+      padding: 0.35rem 0.75rem;
+      font-size: 0.8rem;
+    }
+
+    .search-input {
+      font-size: 0.9rem;
+      padding: 0.65rem 1rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar Overlay (for mobile) -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h3><i class="fas fa-code me-1"></i> Tracker</h3>
+    </div>
+    <ul class="sidebar-menu">
+      <li><a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+      <li><a href="#"><i class="fas fa-list-check"></i> Problem List</a></li>
+      <li><a href="#"><i class="fas fa-chart-line"></i> Progress</a></li>
+      <li><a href="#"><i class="fas fa-book"></i> Study Plan</a></li>
+      <li><a href="#"><i class="fas fa-clipboard"></i> Notes</a></li>
+      <li><a href="#"><i class="fas fa-star"></i> Favorites</a></li>
+      <li><a href="#"><i class="fas fa-trophy"></i> Challenges</a></li>
+      <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+      <li><a href="./code-editor.html"><i class="fas fa-cog"></i> Code Editor</a></li>
+    </ul>
+    <div class="sidebar-footer">
+      <p>DSA Tracker v1.0</p>
+    </div>
+  </div>
+
+  <!-- Mobile Menu Toggle Button -->
+  <button class="menu-toggle" id="menuToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <!-- Main Content -->
+  <div class="main-content" id="mainContent">
+    <div class="container-fluid">
+
+      <!-- Digital Meter UI for Total Problems Solved -->
+      <div class="digital-meter">
+        <div class="digital-meter-title">Total Problems Solved</div>
+        <div class="digital-meter-value" id="total-problems-count">0</div>
+        <div class="digital-meter-total">out of <span id="total-problems-total">100</span> problems</div>
+      </div>
+
+      <!-- Progress Overview Section -->
+      <div class="progress-overview">
+        <h3>Progress by Difficulty</h3>
+        
+        <div class="row">
+          <div class="col-md-4">
+            <div class="progress-item progress-easy">
+              <div class="progress-title">
+                <span>Easy</span>
+                <span class="progress-count"><span id="easy-count">0</span>/<span id="easy-total">40</span></span>
+              </div>
+              <div class="progress-bar-container">
+                <div id="easy-progress-bar" class="progress-bar-fill" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-4">
+            <div class="progress-item progress-medium">
+              <div class="progress-title">
+                <span>Medium</span>
+                <span class="progress-count"><span id="medium-count">0</span>/<span id="medium-total">40</span></span>
+              </div>
+              <div class="progress-bar-container">
+                <div id="medium-progress-bar" class="progress-bar-fill" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-4">
+            <div class="progress-item progress-hard">
+              <div class="progress-title">
+                <span>Hard</span>
+                <span class="progress-count"><span id="hard-count">0</span>/<span id="hard-total">20</span></span>
+              </div>
+              <div class="progress-bar-container">
+                <div id="hard-progress-bar" class="progress-bar-fill" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search and Filters -->
+      <div class="search-container d-flex gap-2 mb-3">
+        <input type="text" class="form-control search-input" id="searchInput" placeholder="Search problems...">
+        <button class="btn btn-primary btn-sm d-flex align-items-center gap-2" id="resetBtn">
+          <i class="fas fa-sync-alt"></i> Reset
+        </button>
+      </div>
+
+      <div class="filter-scroll mb-3">
+        <div class="d-flex gap-2 filter-buttons">
+          <button class="btn btn-sm btn-primary active" data-filter="all">All</button>
+          <button class="btn btn-sm btn-outline-secondary" data-filter="easy">Easy</button>
+          <button class="btn btn-sm btn-outline-secondary" data-filter="medium">Medium</button>
+          <button class="btn btn-sm btn-outline-secondary" data-filter="hard">Hard</button>
+          <button class="btn btn-sm btn-outline-secondary" data-filter="solved">Solved</button>
+          <button class="btn btn-sm btn-outline-secondary" data-filter="attempted">Attempted</button>
+          <button class="btn btn-sm btn-outline-secondary" data-filter="unsolved">Unsolved</button>
+        </div>
+      </div>
+
+      <!-- Problem Sections -->
+      <div id="sections-container">
+        <!-- Sections will be loaded here dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Problem Data and Application Script -->
+  <script>
+    // Problem data module
+    const ProblemData = (() => {
+      const sections = [
+    {
+      id: "basic-problems",
+      title: "1. Basic Python Problems",
+      type: "problems",
+      problems: [
+        {
+          id: "hello-world",
+          title: "Print 'Hello, World!'",
+          difficulty: "easy",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["print", "basic"]
+        },
+        {
+          id: "add-numbers",
+          title: "Add Two Numbers",
+          difficulty: "easy",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["arithmetic", "input"]
+        },
+        {
+          id: "swap-vars",
+          title: "Swap Two Variables",
+          difficulty: "easy",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["variables"]
+        },
+        {
+          id: "convert-celsius",
+          title: "Convert Celsius to Fahrenheit",
+          difficulty: "easy",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["conversion"]
+        },
+        {
+          id: "quadratic-roots",
+          title: "Find Quadratic Roots",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["math", "quadratic"]
+        },
+        {
+          id: "km-to-miles",
+          title: "Convert Kilometers to Miles",
+          difficulty: "easy",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["conversion"]
+        },
+        {
+          id: "check-even",
+          title: "Check Even or Odd",
+          difficulty: "easy",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["modulus"]
+        },
+        {
+          id: "leap-year",
+          title: "Check Leap Year",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["conditions"]
+        },
+        {
+          id: "largest-three",
+          title: "Find Largest Among Three Numbers",
+          difficulty: "easy",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["comparison"]
+        }
+      ]
+    },
+    {
+      id: "string-problems",
+      title: "2. String Problems",
+      type: "problems",
+      problems: [
+        {
+          id: "reverse-string",
+          title: "Reverse a String",
+          difficulty: "easy",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["string", "reverse"]
+        },
+        {
+          id: "palindrome",
+          title: "Check Palindrome",
+          difficulty: "easy",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["string", "palindrome"]
+        },
+        {
+          id: "count-vowels",
+          title: "Count Vowels in String",
+          difficulty: "easy",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["string", "count"]
+        },
+        {
+          id: "anagram",
+          title: "Check if Two Strings are Anagrams",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["string", "anagram"]
+        },
+        {
+          id: "remove-duplicates",
+          title: "Remove Duplicate Characters",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["string", "duplicates"]
+        },
+        {
+          id: "word-count",
+          title: "Count Words in String",
+          difficulty: "easy",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["string", "count"]
+        },
+        {
+          id: "first-char-capital",
+          title: "Capitalize First Character",
+          difficulty: "easy",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["string", "capitalize"]
+        },
+        {
+          id: "string-rotation",
+          title: "Check String Rotation",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["string", "rotation"]
+        },
+        {
+          id: "longest-substring",
+          title: "Longest Substring Without Repeating",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["string", "substring"]
+        },
+        {
+          id: "string-compression",
+          title: "String Compression",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["string", "compression"]
+        }
+      ]
+    },
+    {
+      id: "list-problems",
+      title: "3. List Problems",
+      type: "problems",
+      problems: [
+        {
+          id: "sum-list",
+          title: "Sum of List Elements",
+          difficulty: "easy",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["list", "sum"]
+        },
+        {
+          id: "largest-list",
+          title: "Find Largest in List",
+          difficulty: "easy",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["list", "max"]
+        },
+        {
+          id: "rotate-list",
+          title: "Rotate List by N Positions",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["list", "rotation"]
+        },
+        {
+          id: "remove-duplicates-list",
+          title: "Remove Duplicates from List",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["list", "duplicates"]
+        },
+        {
+          id: "list-comprehension",
+          title: "List Comprehension Exercises",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["list", "comprehension"]
+        },
+        {
+          id: "merge-sorted",
+          title: "Merge Two Sorted Lists",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["list", "merge"]
+        },
+        {
+          id: "flatten-list",
+          title: "Flatten Nested List",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["list", "recursion"]
+        },
+        {
+          id: "list-chunks",
+          title: "Split List into Chunks",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["list", "chunks"]
+        },
+        {
+          id: "second-largest",
+          title: "Find Second Largest Number",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["list", "sorting"]
+        },
+        {
+          id: "common-elements",
+          title: "Find Common Elements in Lists",
+          difficulty: "easy",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["list", "intersection"]
+        }
+      ]
+    },
+    {
+      id: "dictionary-problems",
+      title: "4. Dictionary Problems",
+      type: "problems",
+      problems: [
+        {
+          id: "merge-dicts",
+          title: "Merge Two Dictionaries",
+          difficulty: "easy",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["dictionary", "merge"]
+        },
+        {
+          id: "key-exists",
+          title: "Check if Key Exists",
+          difficulty: "easy",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["dictionary", "key"]
+        },
+        {
+          id: "sum-values",
+          title: "Sum All Values in Dictionary",
+          difficulty: "easy",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["dictionary", "sum"]
+        },
+        {
+          id: "word-frequency",
+          title: "Word Frequency Counter",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["dictionary", "frequency"]
+        },
+        {
+          id: "sort-dict",
+          title: "Sort Dictionary by Value",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["dictionary", "sort"]
+        },
+        {
+          id: "max-value",
+          title: "Find Key with Maximum Value",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["dictionary", "max"]
+        },
+        {
+          id: "nested-dict",
+          title: "Access Nested Dictionary Items",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["dictionary", "nested"]
+        },
+        {
+          id: "dict-comprehension",
+          title: "Dictionary Comprehension",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["dictionary", "comprehension"]
+        },
+        {
+          id: "invert-dict",
+          title: "Invert a Dictionary",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["dictionary", "invert"]
+        },
+        {
+          id: "two-sum",
+          title: "Two Sum Problem",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["dictionary", "hash"]
+        }
+      ]
+    },
+    {
+      id: "function-problems",
+      title: "5. Function Problems",
+      type: "problems",
+      problems: [
+        {
+          id: "factorial",
+          title: "Factorial Using Recursion",
+          difficulty: "easy",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["function", "recursion"]
+        },
+        {
+          id: "fibonacci",
+          title: "Fibonacci Sequence",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["function", "recursion"]
+        },
+        {
+          id: "prime-check",
+          title: "Check Prime Number",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["function", "prime"]
+        },
+        {
+          id: "gcd",
+          title: "Find GCD of Two Numbers",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["function", "gcd"]
+        },
+        {
+          id: "lcm",
+          title: "Find LCM of Two Numbers",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["function", "lcm"]
+        },
+        {
+          id: "power-function",
+          title: "Implement Power Function",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["function", "power"]
+        },
+        {
+          id: "decorator-example",
+          title: "Create a Timer Decorator",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["function", "decorator"]
+        },
+        {
+          id: "closure-example",
+          title: "Create a Closure Function",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["function", "closure"]
+        },
+        {
+          id: "memoization",
+          title: "Implement Memoization",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["function", "memoization"]
+        },
+        {
+          id: "generator-fib",
+          title: "Fibonacci with Generator",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["function", "generator"]
+        }
+      ]
+    },
+    {
+      id: "file-io-problems",
+      title: "6. File I/O Problems",
+      type: "problems",
+      problems: [
+        {
+          id: "read-file",
+          title: "Read File Contents",
+          difficulty: "easy",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["file", "read"]
+        },
+        {
+          id: "write-file",
+          title: "Write to File",
+          difficulty: "easy",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["file", "write"]
+        },
+        {
+          id: "copy-file",
+          title: "Copy File Contents",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["file", "copy"]
+        },
+        {
+          id: "word-count-file",
+          title: "Word Count in File",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["file", "count"]
+        },
+        {
+          id: "merge-files",
+          title: "Merge Two Files",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["file", "merge"]
+        },
+        {
+          id: "csv-read",
+          title: "Read CSV File",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["file", "csv"]
+        },
+        {
+          id: "json-read",
+          title: "Read JSON File",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["file", "json"]
+        },
+        {
+          id: "log-analysis",
+          title: "Analyze Log File",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["file", "log"]
+        },
+        {
+          id: "file-encryption",
+          title: "Simple File Encryption",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["file", "encryption"]
+        },
+        {
+          id: "directory-listing",
+          title: "List Files in Directory",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["file", "directory"]
+        }
+      ]
+    },
+    {
+      id: "oop-problems",
+      title: "7. OOP Problems",
+      type: "problems",
+      problems: [
+        {
+          id: "class-circle",
+          title: "Circle Class",
+          difficulty: "easy",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["class", "oop"]
+        },
+        {
+          id: "bank-account",
+          title: "Bank Account Class",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["class", "oop"]
+        },
+        {
+          id: "inheritance-shapes",
+          title: "Shape Inheritance",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["inheritance", "oop"]
+        },
+        {
+          id: "polymorphism-animals",
+          title: "Animal Polymorphism",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["polymorphism", "oop"]
+        },
+        {
+          id: "magic-methods",
+          title: "Implement Magic Methods",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["magic-methods", "oop"]
+        },
+        {
+          id: "class-student",
+          title: "Student Management System",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["class", "oop"]
+        },
+        {
+          id: "singleton-pattern",
+          title: "Implement Singleton Pattern",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["design-pattern", "oop"]
+        },
+        {
+          id: "decorator-class",
+          title: "Class Decorator",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["decorator", "oop"]
+        },
+        {
+          id: "property-decorator",
+          title: "Use Property Decorator",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["property", "oop"]
+        },
+        {
+          id: "abstract-class",
+          title: "Create Abstract Class",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["abstract", "oop"]
+        }
+      ]
+    },
+    {
+      id: "algorithm-problems",
+      title: "8. Algorithm Problems",
+      type: "problems",
+      problems: [
+        {
+          id: "bubble-sort",
+          title: "Implement Bubble Sort",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["sorting", "algorithm"]
+        },
+        {
+          id: "binary-search",
+          title: "Implement Binary Search",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["search", "algorithm"]
+        },
+        {
+          id: "linear-search",
+          title: "Implement Linear Search",
+          difficulty: "easy",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["search", "algorithm"]
+        },
+        {
+          id: "merge-sort",
+          title: "Implement Merge Sort",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["sorting", "algorithm"]
+        },
+        {
+          id: "quick-sort",
+          title: "Implement Quick Sort",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["sorting", "algorithm"]
+        },
+        {
+          id: "linked-list",
+          title: "Implement Linked List",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["data-structure", "algorithm"]
+        },
+        {
+          id: "binary-tree",
+          title: "Implement Binary Tree",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["data-structure", "algorithm"]
+        },
+        {
+          id: "graph-traversal",
+          title: "Graph Traversal",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["graph", "algorithm"]
+        },
+        {
+          id: "dijkstra",
+          title: "Dijkstra's Algorithm",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["graph", "algorithm"]
+        },
+        {
+          id: "knapsack",
+          title: "0/1 Knapsack Problem",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["dynamic-programming", "algorithm"]
+        }
+      ]
+    },
+    {
+      id: "datetime-problems",
+      title: "9. Date/Time Problems",
+      type: "problems",
+      problems: [
+        {
+          id: "current-date",
+          title: "Get Current Date/Time",
+          difficulty: "easy",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["datetime"]
+        },
+        {
+          id: "date-diff",
+          title: "Calculate Date Difference",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["datetime"]
+        },
+        {
+          id: "format-date",
+          title: "Format Date String",
+          difficulty: "easy",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["datetime"]
+        },
+        {
+          id: "add-days",
+          title: "Add Days to Date",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["datetime"]
+        },
+        {
+          id: "day-of-week",
+          title: "Find Day of Week",
+          difficulty: "easy",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["datetime"]
+        },
+        {
+          id: "timezone-convert",
+          title: "Convert Between Timezones",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["datetime"]
+        },
+        {
+          id: "age-calculator",
+          title: "Age Calculator",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["datetime"]
+        },
+        {
+          id: "business-days",
+          title: "Count Business Days",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["datetime"]
+        },
+        {
+          id: "leap-year-check",
+          title: "Check Leap Year",
+          difficulty: "easy",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["datetime"]
+        },
+        {
+          id: "time-delta",
+          title: "Calculate Time Delta",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["datetime"]
+        }
+      ]
+    },
+    {
+      id: "regex-problems",
+      title: "10. Regular Expression Problems",
+      type: "problems",
+      problems: [
+        {
+          id: "email-validation",
+          title: "Validate Email Address",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["regex"]
+        },
+        {
+          id: "phone-validation",
+          title: "Validate Phone Number",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["regex"]
+        },
+        {
+          id: "password-strength",
+          title: "Check Password Strength",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["regex"]
+        },
+        {
+          id: "extract-numbers",
+          title: "Extract Numbers from String",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["regex"]
+        },
+        {
+          id: "find-urls",
+          title: "Find URLs in Text",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["regex"]
+        },
+        {
+          id: "replace-words",
+          title: "Replace Words in String",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["regex"]
+        },
+        {
+          id: "split-string",
+          title: "Split String by Multiple Delimiters",
+          difficulty: "medium",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["regex"]
+        },
+        {
+          id: "html-tags",
+          title: "Remove HTML Tags",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["regex"]
+        },
+        {
+          id: "date-extraction",
+          title: "Extract Dates from Text",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["regex"]
+        },
+        {
+          id: "credit-card",
+          title: "Validate Credit Card Number",
+          difficulty: "hard",
+          status: "unsolved",
+          solution: "#",
+          video: "#",
+          tags: ["regex"]
+        }
+      ]
+    }
+  ];
+
+        
+      const getAllProblems = () => {
+        return sections.flatMap(section => section.type === "problems" ? section.problems : []);
+      };
+      
+      const getFilteredProblems = (filter, search) => {
+        let filtered = getAllProblems();
+        
+        if (search) {
+          const searchTerm = search.toLowerCase();
+          filtered = filtered.filter(problem => 
+            problem.title.toLowerCase().includes(searchTerm) ||
+            problem.tags.some(tag => tag.toLowerCase().includes(searchTerm))
+          );
+        }
+        
+        if (filter !== 'all') {
+          if (['solved', 'attempted', 'unsolved'].includes(filter)) {
+            filtered = filtered.filter(problem => problem.status === filter);
+          } else {
+            filtered = filtered.filter(problem => problem.difficulty === filter);
+          }
+        }
+        
+        return filtered;
+      };
+      
+      const updateProblemStatus = (problemId, newStatus) => {
+        for (const section of sections) {
+          if (section.type === "problems") {
+            const problem = section.problems.find(p => p.id === problemId);
+            if (problem) {
+              problem.status = newStatus;
+              return true;
+            }
+          }
+        }
+        return false;
+      };
+      
+      const getProgressStats = () => {
+        const allProblems = getAllProblems();
+        const totalProblems = allProblems.length;
+        const solvedProblems = allProblems.filter(p => p.status === 'solved').length;
+        
+        const easyProblems = allProblems.filter(p => p.difficulty === 'easy');
+        const mediumProblems = allProblems.filter(p => p.difficulty === 'medium');
+        const hardProblems = allProblems.filter(p => p.difficulty === 'hard');
+        
+        return {
+          total: {
+            count: solvedProblems,
+            total: totalProblems,
+            percent: Math.round((solvedProblems / totalProblems) * 100) || 0
+          },
+          easy: {
+            count: easyProblems.filter(p => p.status === 'solved').length,
+            total: easyProblems.length,
+            percent: Math.round((easyProblems.filter(p => p.status === 'solved').length / easyProblems.length) * 100) || 0
+          },
+          medium: {
+            count: mediumProblems.filter(p => p.status === 'solved').length,
+            total: mediumProblems.length,
+            percent: Math.round((mediumProblems.filter(p => p.status === 'solved').length / mediumProblems.length) * 100) || 0
+          },
+          hard: {
+            count: hardProblems.filter(p => p.status === 'solved').length,
+            total: hardProblems.length,
+            percent: Math.round((hardProblems.filter(p => p.status === 'solved').length / hardProblems.length) * 100) || 0
+          }
+        };
+      };
+      
+      return {
+        sections,
+        getAllProblems,
+        getFilteredProblems,
+        updateProblemStatus,
+        getProgressStats
+      };
+    })();
+
+    // UI Controller module
+    const UIController = (() => {
+      const DOMStrings = {
+        problemList: '#problemList',
+        searchInput: '#searchInput',
+        filterButtons: '.filter-buttons button',
+        resetBtn: '#resetBtn',
+        sectionsContainer: '#sections-container',
+        progressElements: {
+          total: {
+            count: '#total-problems-count',
+            total: '#total-problems-total'
+          },
+          easy: {
+            count: '#easy-count',
+            total: '#easy-total',
+            bar: '#easy-progress-bar'
+          },
+          medium: {
+            count: '#medium-count',
+            total: '#medium-total',
+            bar: '#medium-progress-bar'
+          },
+          hard: {
+            count: '#hard-count',
+            total: '#hard-total',
+            bar: '#hard-progress-bar'
+          }
+        },
+        sidebar: '#sidebar',
+        mainContent: '#mainContent',
+        menuToggle: '#menuToggle',
+        sidebarOverlay: '#sidebarOverlay'
+      };
+      
+      const renderProblems = (problems) => {
+        const container = document.querySelector(DOMStrings.sectionsContainer);
+        container.innerHTML = '';
+        
+        // Group problems by their sections
+        const problemsBySection = {};
+        problems.forEach(problem => {
+          const section = ProblemData.sections.find(s => 
+            s.type === "problems" && s.problems.some(p => p.id === problem.id)
+          );
+          if (section) {
+            if (!problemsBySection[section.id]) {
+              problemsBySection[section.id] = {
+                section: section,
+                problems: []
+              };
+            }
+            problemsBySection[section.id].problems.push(problem);
+          }
+        });
+        
+        // Render each section with its problems
+        for (const sectionId in problemsBySection) {
+          const { section, problems } = problemsBySection[sectionId];
+          
+          const sectionElement = document.createElement('div');
+          sectionElement.className = 'section mb-4';
+          
+          // Section header
+          const header = document.createElement('div');
+          header.className = 'section-header';
+          header.innerHTML = `
+            <h3>
+              ${section.title}
+              <span class="badge bg-primary rounded-pill">${problems.length} problems</span>
+            </h3>
+          `;
+          
+          // Section content
+          const content = document.createElement('div');
+          content.className = 'section-content';
+          content.style.display = 'none'; // Collapsed by default
+          
+          // Problems table wrapper for horizontal scrolling
+          const tableWrapper = document.createElement('div');
+          tableWrapper.className = 'problems-table-wrapper';
+          
+          // Problems table
+          const table = document.createElement('div');
+          table.className = 'problems-table shadow-sm';
+          table.innerHTML = `
+            <table class="table table-hover mb-0">
+              <thead>
+                <tr>
+                  <th width="50">#</th>
+                  <th width="80">Status</th>
+                  <th>Problem</th>
+                  <th width="120">Difficulty</th>
+                  <th width="120">Solution</th>
+                  <th width="120">Video</th>
+                  <th width="120">Solve</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${problems.map((problem, index) => `
+                  <tr data-problem-id="${problem.id}">
+                    <td>${index + 1}</td>
+                    <td>
+                      <span class="status status-${problem.status}" 
+                            title="${problem.status.charAt(0).toUpperCase() + problem.status.slice(1)}"
+                            aria-label="Status: ${problem.status}"
+                            data-problem-id="${problem.id}"></span>
+                    </td>
+                    <td>
+                      <div class="problem-title">${problem.title}</div>
+                      <div class="text-muted small mt-1">
+                        ${problem.tags.join(', ')}
+                      </div>
+                    </td>
+                    <td>
+                      <span class="difficulty ${problem.difficulty}">
+                        ${problem.difficulty.charAt(0).toUpperCase() + problem.difficulty.slice(1)}
+                      </span>
+                    </td>
+                    <td>
+                      <a href="${problem.solution}" target="_blank" class="text-decoration-none text-primary">
+                        <i class="fas fa-code me-1"></i> Solution
+                      </a>
+                    </td>
+                    <td>
+                      <a href="${problem.video}" target="_blank" class="text-decoration-none text-primary">
+                        <i class="fas fa-video me-1"></i> Video
+                      </a>
+                    </td>
+                    <td>
+                      <a href="problem.html?id=${problem.id}" class="btn btn-success btn-sm">
+                        <i class="fas fa-terminal me-1"></i> Solve
+                      </a>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          `;
+          
+          tableWrapper.appendChild(table);
+          content.appendChild(tableWrapper);
+          sectionElement.appendChild(header);
+          sectionElement.appendChild(content);
+          container.appendChild(sectionElement);
+          
+          // Add click event to toggle section content
+          header.addEventListener('click', () => {
+            content.style.display = content.style.display === 'none' ? 'block' : 'none';
+          });
+        }
+
+        // Add notes sections
+        ProblemData.sections.filter(section => section.type === "notes").forEach(section => {
+          const notesElement = document.createElement('div');
+          notesElement.className = 'notes-section mb-4';
+          notesElement.innerHTML = `
+            <h4><i class="fas fa-clipboard me-2"></i>${section.title}</h4>
+            <div class="notes-content">
+              ${section.content || ''}
+            </div>
+          `;
+          container.appendChild(notesElement);
+        });
+
+        // Add event listeners for status changes
+        document.querySelectorAll('.status').forEach(statusElement => {
+          statusElement.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const problemId = statusElement.dataset.problemId;
+            const currentStatus = statusElement.classList.contains('status-solved') ? 'solved' :
+                                 statusElement.classList.contains('status-attempted') ? 'attempted' : 'unsolved';
+            
+            // Cycle through statuses: unsolved -> attempted -> solved -> unsolved
+            let newStatus;
+            if (currentStatus === 'unsolved') {
+              newStatus = 'attempted';
+            } else if (currentStatus === 'attempted') {
+              newStatus = 'solved';
+            } else {
+              newStatus = 'unsolved';
+            }
+            
+            // Update the problem status in the data model
+            if (ProblemData.updateProblemStatus(problemId, newStatus)) {
+              // Update the UI
+              statusElement.className = 'status';
+              statusElement.classList.add(`status-${newStatus}`);
+              statusElement.setAttribute('title', newStatus.charAt(0).toUpperCase() + newStatus.slice(1));
+              statusElement.setAttribute('aria-label', `Status: ${newStatus}`);
+              
+              // Update progress
+              updateProgressStats();
+            }
+          });
+        });
+      };
+      
+      const updateProgressStats = () => {
+        const progress = ProblemData.getProgressStats();
+        
+        // Update total progress
+        const totalElem = DOMStrings.progressElements.total;
+        document.querySelector(totalElem.count).textContent = progress.total.count;
+        document.querySelector(totalElem.total).textContent = progress.total.total;
+        
+        // Update easy progress
+        const easyElem = DOMStrings.progressElements.easy;
+        document.querySelector(easyElem.count).textContent = progress.easy.count;
+        document.querySelector(easyElem.total).textContent = progress.easy.total;
+        document.querySelector(easyElem.bar).style.width = `${progress.easy.percent}%`;
+        
+        // Update medium progress
+        const mediumElem = DOMStrings.progressElements.medium;
+        document.querySelector(mediumElem.count).textContent = progress.medium.count;
+        document.querySelector(mediumElem.total).textContent = progress.medium.total;
+        document.querySelector(mediumElem.bar).style.width = `${progress.medium.percent}%`;
+        
+        // Update hard progress
+        const hardElem = DOMStrings.progressElements.hard;
+        document.querySelector(hardElem.count).textContent = progress.hard.count;
+        document.querySelector(hardElem.total).textContent = progress.hard.total;
+        document.querySelector(hardElem.bar).style.width = `${progress.hard.percent}%`;
+      };
+      
+      const updateActiveFilter = (activeFilter) => {
+        document.querySelectorAll(DOMStrings.filterButtons).forEach(btn => {
+          btn.classList.remove('btn-primary', 'active');
+          btn.classList.add('btn-outline-secondary');
+          
+          if (btn.dataset.filter === activeFilter) {
+            btn.classList.add('btn-primary', 'active');
+            btn.classList.remove('btn-outline-secondary');
+          }
+        });
+      };
+      
+      const clearSearch = () => {
+        document.querySelector(DOMStrings.searchInput).value = '';
+      };
+      
+      const getSearchInput = () => {
+        return document.querySelector(DOMStrings.searchInput).value.trim();
+      };
+      
+      const toggleSidebar = () => {
+        document.querySelector(DOMStrings.sidebar).classList.toggle('active');
+        document.querySelector(DOMStrings.sidebarOverlay).classList.toggle('active');
+      };
+      
+      return {
+        DOMStrings,
+        renderProblems,
+        updateProgressStats,
+        updateActiveFilter,
+        clearSearch,
+        getSearchInput,
+        toggleSidebar
+      };
+    })();
+
+    // Main App Controller
+    const AppController = ((ProblemData, UIController) => {
+      const setupEventListeners = () => {
+        // Search input
+        document.querySelector(UIController.DOMStrings.searchInput)
+          .addEventListener('input', filterProblems);
+          
+        // Filter buttons
+        document.querySelectorAll(UIController.DOMStrings.filterButtons)
+          .forEach(button => {
+            button.addEventListener('click', () => {
+              const filter = button.dataset.filter;
+              UIController.updateActiveFilter(filter);
+              filterProblems();
+            });
+          });
+          
+        // Reset button
+        document.querySelector(UIController.DOMStrings.resetBtn)
+          .addEventListener('click', resetFilters);
+          
+        // Menu toggle button
+        document.querySelector(UIController.DOMStrings.menuToggle)
+          .addEventListener('click', UIController.toggleSidebar);
+          
+        // Sidebar overlay click
+        document.querySelector(UIController.DOMStrings.sidebarOverlay)
+          .addEventListener('click', UIController.toggleSidebar);
+      };
+      
+      const filterProblems = () => {
+        const searchTerm = UIController.getSearchInput();
+        const activeFilter = document.querySelector(`${UIController.DOMStrings.filterButtons}.active`).dataset.filter;
+        
+        const filteredProblems = ProblemData.getFilteredProblems(activeFilter, searchTerm);
+        UIController.renderProblems(filteredProblems);
+      };
+      
+      const resetFilters = () => {
+        UIController.clearSearch();
+        UIController.updateActiveFilter('all');
+        filterProblems();
+      };
+      
+      const init = () => {
+        console.log('App initialized');
+        setupEventListeners();
+        
+        // Initial render
+        UIController.renderProblems(ProblemData.getAllProblems());
+        UIController.updateProgressStats();
+      };
+      
+      return {
+        init
+      };
+    })(ProblemData, UIController);
+
+    // Initialize the application
+    document.addEventListener('DOMContentLoaded', AppController.init);
+  </script>
+</body>
+</html>

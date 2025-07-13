@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code Editor | DSA Problem Tracker</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Monaco Editor -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.36.1/min/vs/loader.min.js"></script>
+  <!-- Custom CSS -->
+  <style>
+    :root {
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --bg: #f8fafc;
+      --text: #1e293b;
+      --text-light: #64748b;
+      --border: #e2e8f0;
+      --row-hover: #f1f5f9;
+      --meter-background: #e2e8f0;
+      --meter-fill: #3b82f6;
+      --sidebar-width: 280px;
+      --sidebar-bg: #ffffff;
+      --sidebar-text: #1e293b;
+      --sidebar-active-bg: #f1f5f9;
+      --sidebar-hover-bg: #f8fafc;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      font-weight: 400;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: var(--sidebar-width);
+      background-color: var(--sidebar-bg);
+      color: var(--sidebar-text);
+      padding: 1rem;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+      z-index: 1000;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      overflow-y: auto;
+    }
+
+    .sidebar.active {
+      transform: translateX(0);
+    }
+
+    .sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .sidebar-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .sidebar-header {
+      padding: 1rem 0.5rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-header h3 {
+      font-weight: 700;
+      margin-bottom: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .sidebar-menu li {
+      margin-bottom: 0.25rem;
+    }
+
+    .sidebar-menu a {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      color: var(--sidebar-text);
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .sidebar-menu a:hover {
+      background-color: var(--sidebar-hover-bg);
+      color: var(--primary);
+    }
+
+    .sidebar-menu a.active {
+      background-color: var(--sidebar-active-bg);
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    .sidebar-menu a i {
+      margin-right: 0.75rem;
+      width: 20px;
+      text-align: center;
+    }
+
+    .sidebar-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 1rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-light);
+    }
+
+    /* Main Content Styles */
+    .main-content {
+      padding: 1rem;
+      transition: transform 0.3s ease;
+    }
+
+    /* Mobile Menu Toggle Button */
+    .menu-toggle {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 1100;
+      background: var(--primary);
+      color: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .menu-toggle:hover {
+      background: var(--primary-hover);
+    }
+
+    /* Editor Container */
+    .editor-container {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+
+    .editor-header {
+      background-color: #f1f5f9;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .editor-header h4 {
+      margin: 0;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .editor-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    #editor {
+      height: 500px;
+      width: 100%;
+    }
+
+    /* Problem Info Section */
+    .problem-info {
+      background-color: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .problem-info h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text);
+    }
+
+    .problem-difficulty {
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 5px 10px;
+      border-radius: 20px;
+      display: inline-block;
+      min-width: 70px;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .easy {
+      background-color: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+    }
+
+    .medium {
+      background-color: rgba(245, 158, 11, 0.1);
+      color: var(--warning);
+    }
+
+    .hard {
+      background-color: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+    }
+
+    .problem-description {
+      line-height: 1.6;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+    }
+
+    .problem-example {
+      background-color: #f8fafc;
+      border-radius: 6px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-left: 3px solid var(--primary);
+    }
+
+    .problem-example h5 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    /* Console Section */
+    .console-container {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+
+    .console-header {
+      background-color: #f1f5f9;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .console-header h4 {
+      margin: 0;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .console-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    #console {
+      height: 200px;
+      width: 100%;
+      background-color: #1e293b;
+      color: #e2e8f0;
+      font-family: 'Courier New', Courier, monospace;
+      padding: 1rem;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+
+    /* Button Styles */
+    .btn-run {
+      background-color: var(--success);
+      color: white;
+    }
+
+    .btn-run:hover {
+      background-color: #0d9c6d;
+      color: white;
+    }
+
+    .btn-submit {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-submit:hover {
+      background-color: var(--primary-hover);
+      color: white;
+    }
+
+    .btn-reset {
+      background-color: var(--danger);
+      color: white;
+    }
+
+    .btn-reset:hover {
+      background-color: #dc2626;
+      color: white;
+    }
+
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+      body {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+      }
+
+      .main-content {
+        padding: 0.75rem;
+      }
+
+      #editor {
+        height: 300px;
+      }
+
+      #console {
+        height: 150px;
+      }
+    }
+
+    /* Desktop styles */
+    @media (min-width: 992px) {
+      .sidebar {
+        transform: translateX(0);
+      }
+
+      .menu-toggle {
+        display: none;
+      }
+
+      .sidebar-overlay {
+        display: none;
+      }
+
+      .main-content {
+        margin-left: var(--sidebar-width);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar Overlay (for mobile) -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h3><i class="fas fa-code me-1"></i> DSA Tracker</h3>
+    </div>
+    <ul class="sidebar-menu">
+      <li><a href="./index.html"><i class="fas fa-home"></i> Dashboard</a></li>
+      <li><a href="#"><i class="fas fa-list-check"></i> Problem List</a></li>
+      <li><a href="#"><i class="fas fa-chart-line"></i> Progress</a></li>
+      <li><a href="#"><i class="fas fa-book"></i> Study Plan</a></li>
+      <li><a href="#"><i class="fas fa-clipboard"></i> Notes</a></li>
+      <li><a href="#"><i class="fas fa-star"></i> Favorites</a></li>
+      <li><a href="#"><i class="fas fa-trophy"></i> Challenges</a></li>
+      <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+      <li><a href="./code-editor.html" class="active"><i class="fas fa-code"></i> Code Editor</a></li>
+    </ul>
+    <div class="sidebar-footer">
+      <p>DSA Tracker v1.0</p>
+    </div>
+  </div>
+
+  <!-- Mobile Menu Toggle Button -->
+  <button class="menu-toggle" id="menuToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <!-- Main Content -->
+  <div class="main-content" id="mainContent">
+    <div class="container-fluid">
+      <!-- Problem Info Section -->
+      <div class="problem-info">
+        <h3 id="problem-title">Two Sum</h3>
+        <span class="problem-difficulty easy">Easy</span>
+        
+        <div class="problem-description">
+          <p>Given an array of integers <code>nums</code> and an integer <code>target</code>, return indices of the two numbers such that they add up to <code>target</code>.</p>
+          <p>You may assume that each input would have exactly one solution, and you may not use the same element twice.</p>
+          <p>You can return the answer in any order.</p>
+        </div>
+        
+        <h5>Example 1:</h5>
+        <div class="problem-example">
+          <p><strong>Input:</strong> nums = [2,7,11,15], target = 9</p>
+          <p><strong>Output:</strong> [0,1]</p>
+          <p><strong>Explanation:</strong> Because nums[0] + nums[1] == 9, we return [0, 1].</p>
+        </div>
+        
+        <h5>Example 2:</h5>
+        <div class="problem-example">
+          <p><strong>Input:</strong> nums = [3,2,4], target = 6</p>
+          <p><strong>Output:</strong> [1,2]</p>
+        </div>
+        
+        <h5>Example 3:</h5>
+        <div class="problem-example">
+          <p><strong>Input:</strong> nums = [3,3], target = 6</p>
+          <p><strong>Output:</strong> [0,1]</p>
+        </div>
+      </div>
+      
+      <!-- Editor Section -->
+      <div class="editor-container">
+        <div class="editor-header">
+          <h4><i class="fas fa-code me-2"></i>Solution.py</h4>
+          <div class="editor-actions">
+            <button class="btn btn-sm btn-reset" id="resetBtn">
+              <i class="fas fa-redo me-1"></i> Reset
+            </button>
+          </div>
+        </div>
+        <div id="editor"></div>
+      </div>
+      
+      <!-- Console Section -->
+      <div class="console-container">
+        <div class="console-header">
+          <h4><i class="fas fa-terminal me-2"></i>Console</h4>
+          <div class="console-actions">
+            <button class="btn btn-sm btn-run me-2" id="runBtn">
+              <i class="fas fa-play me-1"></i> Run
+            </button>
+            <button class="btn btn-sm btn-submit" id="submitBtn">
+              <i class="fas fa-check me-1"></i> Submit
+            </button>
+          </div>
+        </div>
+        <div id="console"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Editor and Application Script -->
+  <script>
+    // Initialize Monaco Editor
+    require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.36.1/min/vs' }});
+    
+    require(['vs/editor/editor.main'], function() {
+      const editor = monaco.editor.create(document.getElementById('editor'), {
+        value: [
+          'def twoSum(nums, target):',
+          '    hashmap = {}',
+          '    for i, num in enumerate(nums):',
+          '        complement = target - num',
+          '        if complement in hashmap:',
+          '            return [hashmap[complement], i]',
+          '        hashmap[num] = i',
+          '    return []',
+          '',
+          '# Test cases',
+          'print(twoSum([2,7,11,15], 9))  # Output: [0, 1]',
+          'print(twoSum([3,2,4], 6))      # Output: [1, 2]',
+          'print(twoSum([3,3], 6))        # Output: [0, 1]'
+        ].join('\n'),
+        language: 'python',
+        theme: 'vs-dark',
+        automaticLayout: true,
+        minimap: { enabled: false },
+        fontSize: 14,
+        lineNumbers: 'on',
+        roundedSelection: true,
+        scrollBeyondLastLine: false,
+        renderWhitespace: 'selection'
+      });
+      
+      // Get DOM elements
+      const runBtn = document.getElementById('runBtn');
+      const submitBtn = document.getElementById('submitBtn');
+      const resetBtn = document.getElementById('resetBtn');
+      const consoleOutput = document.getElementById('console');
+      
+      // Run button click handler
+      runBtn.addEventListener('click', () => {
+        const code = editor.getValue();
+        consoleOutput.innerHTML = 'Running code...\n';
+        
+        // In a real app, you would send this to a backend for execution
+        // This is just a simple simulation
+        setTimeout(() => {
+          consoleOutput.innerHTML += '> [0, 1]\n> [1, 2]\n> [0, 1]\n';
+        }, 500);
+      });
+      
+      // Submit button click handler
+      submitBtn.addEventListener('click', () => {
+        const code = editor.getValue();
+        consoleOutput.innerHTML = 'Submitting solution...\n';
+        
+        // In a real app, you would send this to a backend for verification
+        setTimeout(() => {
+          consoleOutput.innerHTML += '✓ All test cases passed!\n';
+          consoleOutput.innerHTML += 'Congratulations! Problem marked as solved.\n';
+        }, 1000);
+      });
+      
+      // Reset button click handler
+      resetBtn.addEventListener('click', () => {
+        editor.setValue([
+          'def twoSum(nums, target):',
+          '    # Your code here',
+          '    pass',
+          '',
+          '# Test cases',
+          'print(twoSum([2,7,11,15], 9))',
+          'print(twoSum([3,2,4], 6))',
+          'print(twoSum([3,3], 6))'
+        ].join('\n'));
+        consoleOutput.innerHTML = 'Editor reset to initial state.\n';
+      });
+    });
+
+    // Sidebar toggle functionality
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    
+    menuToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('active');
+      sidebarOverlay.classList.toggle('active');
+    });
+    
+    sidebarOverlay.addEventListener('click', () => {
+      sidebar.classList.remove('active');
+      sidebarOverlay.classList.remove('active');
+    });
+  </script>
+</body>
+</html>

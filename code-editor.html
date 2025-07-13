@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi-Language Code Editor | DSA Problem Tracker</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Monaco Editor -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.36.1/min/vs/loader.min.js"></script>
+  <!-- Custom CSS -->
+  <style>
+    :root {
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --bg: #f8fafc;
+      --text: #1e293b;
+      --text-light: #64748b;
+      --border: #e2e8f0;
+      --sidebar-width: 280px;
+      --sidebar-bg: #ffffff;
+      --sidebar-text: #1e293b;
+      --sidebar-active-bg: #f1f5f9;
+      --sidebar-hover-bg: #f8fafc;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      font-weight: 400;
+      line-height: 1.5;
+      overflow-x: hidden;
+      height: 100vh;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: var(--sidebar-width);
+      background-color: var(--sidebar-bg);
+      color: var(--sidebar-text);
+      padding: 1rem;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+      z-index: 1000;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      overflow-y: auto;
+    }
+
+    .sidebar.active {
+      transform: translateX(0);
+    }
+
+    .sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .sidebar-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .sidebar-header {
+      padding: 1rem 0.5rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-header h3 {
+      font-weight: 700;
+      margin-bottom: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .sidebar-menu li {
+      margin-bottom: 0.25rem;
+    }
+
+    .sidebar-menu a {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      color: var(--sidebar-text);
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .sidebar-menu a:hover {
+      background-color: var(--sidebar-hover-bg);
+      color: var(--primary);
+    }
+
+    .sidebar-menu a.active {
+      background-color: var(--sidebar-active-bg);
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    .sidebar-menu a i {
+      margin-right: 0.75rem;
+      width: 20px;
+      text-align: center;
+    }
+
+    .sidebar-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 1rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-light);
+    }
+
+    /* Main Content Styles */
+    .main-content {
+      padding: 1rem;
+      transition: transform 0.3s ease;
+      height: 100%;
+    }
+
+    /* Mobile Menu Toggle Button */
+    .menu-toggle {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 1100;
+      background: var(--primary);
+      color: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .menu-toggle:hover {
+      background: var(--primary-hover);
+    }
+
+    /* Editor and Console Container */
+    .editor-console-wrapper {
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 2rem); /* Subtract padding */
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+
+    .editor-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 100px; /* Minimum height for editor */
+    }
+
+    .editor-header {
+      background-color: #f1f5f9;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .editor-header h4 {
+      margin: 0;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+    }
+
+    .editor-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .language-selector {
+      margin-left: 10px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      font-size: 0.8rem;
+    }
+
+    #editor {
+      flex: 1;
+      width: 100%;
+    }
+
+    /* Console Section */
+    .console-container {
+      flex-shrink: 0;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      height: 200px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .console-resize-handle {
+      position: absolute;
+      top: -4px;
+      left: 0;
+      right: 0;
+      height: 8px;
+      cursor: row-resize;
+      z-index: 10;
+      background: transparent;
+    }
+
+    .console-header {
+      background-color: #f1f5f9;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .console-header h4 {
+      margin: 0;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .console-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    #console {
+      flex: 1;
+      width: 100%;
+      background-color: #1e293b;
+      color: #e2e8f0;
+      font-family: 'Courier New', Courier, monospace;
+      padding: 1rem;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+
+    /* Button Styles */
+    .btn-run {
+      background-color: var(--success);
+      color: white;
+    }
+
+    .btn-run:hover {
+      background-color: #0d9c6d;
+      color: white;
+    }
+
+    .btn-reset {
+      background-color: var(--danger);
+      color: white;
+    }
+
+    .btn-reset:hover {
+      background-color: #dc2626;
+      color: white;
+    }
+
+    .btn-maximize {
+      background-color: var(--warning);
+      color: white;
+    }
+
+    .btn-maximize:hover {
+      background-color: #e6910a;
+      color: white;
+    }
+
+    /* Loading spinner */
+    .spinner {
+      display: inline-block;
+      width: 1rem;
+      height: 1rem;
+      border: 2px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+      body {
+        padding: 0rem;
+        font-size: 0.9rem;
+      }
+
+      .main-content {
+        padding: 0rem;
+      }
+
+      .editor-console-wrapper {
+        height: calc(100vh - 1.5rem); /* Adjust for smaller padding */
+      }
+
+      .console-container {
+        height: 150px;
+      }
+    }
+
+    /* Desktop styles */
+    @media (min-width: 992px) {
+      .sidebar {
+        transform: translateX(0);
+      }
+
+      .menu-toggle {
+        display: none;
+      }
+
+      .sidebar-overlay {
+        display: none;
+      }
+
+      .main-content {
+        margin-left: var(--sidebar-width);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar Overlay (for mobile) -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h3><i class="fas fa-code me-1"></i> DSA Tracker</h3>
+    </div>
+    <ul class="sidebar-menu">
+      <li><a href="./index.html"><i class="fas fa-home"></i> Dashboard</a></li>
+      <li><a href="#"><i class="fas fa-list-check"></i> Problem List</a></li>
+      <li><a href="#"><i class="fas fa-chart-line"></i> Progress</a></li>
+      <li><a href="#"><i class="fas fa-book"></i> Study Plan</a></li>
+      <li><a href="#"><i class="fas fa-clipboard"></i> Notes</a></li>
+      <li><a href="#"><i class="fas fa-star"></i> Favorites</a></li>
+      <li><a href="#"><i class="fas fa-trophy"></i> Challenges</a></li>
+      <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+      <li><a href="./code-editor.html" class="active"><i class="fas fa-code"></i> Code Editor</a></li>
+    </ul>
+    <div class="sidebar-footer">
+      <p>DSA Tracker v1.0</p>
+    </div>
+  </div>
+
+  <!-- Mobile Menu Toggle Button -->
+  <button class="menu-toggle" id="menuToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <!-- Main Content -->
+  <div class="main-content" id="mainContent">
+    <div class="container-fluid h-100">
+      <!-- Combined Editor and Console Container -->
+      <div class="editor-console-wrapper">
+        <!-- Editor Section -->
+        <div class="editor-container">
+          <div class="editor-header">
+            <h4><i class="fas fa-code me-2"></i>Code Editor 
+              <select class="language-selector" id="languageSelector">
+                <option value="python">Python</option>
+                <option value="javascript">JavaScript</option>
+                <option value="java">Java</option>
+                <option value="cpp">C++</option>
+              </select>
+            </h4>
+            <div class="editor-actions">
+              <button class="btn btn-sm btn-reset" id="resetBtn">
+                <i class="fas fa-redo me-1"></i> Reset
+              </button>
+            </div>
+          </div>
+          <div id="editor"></div>
+        </div>
+        
+        <!-- Console Section -->
+        <div class="console-container" id="consoleContainer">
+          <div class="console-resize-handle" id="consoleResizeHandle"></div>
+          <div class="console-header">
+            <h4><i class="fas fa-terminal me-2"></i>Console</h4>
+            <div class="console-actions">
+              <button class="btn btn-sm btn-maximize" id="maximizeBtn">
+                <i class="fas fa-expand me-1"></i> Maximize
+              </button>
+              <button class="btn btn-sm btn-run" id="runBtn">
+                <i class="fas fa-play me-1"></i> Run Code
+              </button>
+            </div>
+          </div>
+          <div id="console"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Editor and Application Script -->
+  <script>
+    // Language templates and Piston API mappings
+    const languageConfig = {
+      python: {
+        template: `# Python 3 Code
+print("Hello, World!")`,
+        pistonLang: "python",
+        pistonVersion: "3.10.0",
+        compileCmd: null
+      },
+      javascript: {
+        template: `// JavaScript Code
+console.log("Hello, World!");`,
+        pistonLang: "javascript",
+        pistonVersion: "18.15.0",
+        compileCmd: null
+      },
+      java: {
+        template: `// Java Code
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+}`,
+        pistonLang: "java",
+        pistonVersion: "15.0.2",
+        compileCmd: "javac Main.java"
+      },
+      cpp: {
+        template: `// C++ Code
+#include <iostream>
+using namespace std;
+
+int main() {
+    cout << "Hello, World!" << endl;
+    return 0;
+}`,
+        pistonLang: "cpp",
+        pistonVersion: "10.2.0",
+        compileCmd: "g++ -o main main.cpp"
+      }
+    };
+
+    // Initialize Monaco Editor
+    require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.36.1/min/vs' }});
+    
+    let editor;
+    let currentLanguage = 'python';
+
+    require(['vs/editor/editor.main'], function() {
+      editor = monaco.editor.create(document.getElementById('editor'), {
+        value: languageConfig.python.template,
+        language: 'python',
+        theme: 'vs-dark',
+        automaticLayout: true,
+        minimap: { enabled: false },
+        fontSize: 14,
+        lineNumbers: 'on',
+        roundedSelection: true,
+        scrollBeyondLastLine: false,
+        renderWhitespace: 'selection'
+      });
+      
+      // Get DOM elements
+      const runBtn = document.getElementById('runBtn');
+      const resetBtn = document.getElementById('resetBtn');
+      const languageSelector = document.getElementById('languageSelector');
+      const consoleOutput = document.getElementById('console');
+      const consoleContainer = document.getElementById('consoleContainer');
+      const maximizeBtn = document.getElementById('maximizeBtn');
+      const resizeHandle = document.getElementById('consoleResizeHandle');
+      
+      // Console state
+      let isConsoleMaximized = false;
+      let originalConsoleHeight = consoleContainer.offsetHeight;
+      
+      // Toggle console maximize/minimize
+      maximizeBtn.addEventListener('click', () => {
+        if (isConsoleMaximized) {
+          // Restore to original height
+          consoleContainer.style.height = `${originalConsoleHeight}px`;
+          maximizeBtn.innerHTML = '<i class="fas fa-expand me-1"></i> Maximize';
+        } else {
+          // Maximize console (take 70% of viewport)
+          originalConsoleHeight = consoleContainer.offsetHeight;
+          const newHeight = window.innerHeight * 0.7;
+          consoleContainer.style.height = `${newHeight}px`;
+          maximizeBtn.innerHTML = '<i class="fas fa-compress me-1"></i> Minimize';
+        }
+        isConsoleMaximized = !isConsoleMaximized;
+        editor.layout(); // Tell Monaco to recalculate layout
+      });
+      
+      // Make console resizable
+      resizeHandle.addEventListener('mousedown', function(e) {
+        e.preventDefault();
+        
+        const startY = e.clientY;
+        const startHeight = parseInt(document.defaultView.getComputedStyle(consoleContainer).height, 10);
+        
+        function doDrag(e) {
+          const newHeight = startHeight + startY - e.clientY;
+          if (newHeight > 100 && newHeight < window.innerHeight - 100) {
+            consoleContainer.style.height = `${newHeight}px`;
+            editor.layout(); // Tell Monaco to recalculate layout
+          }
+        }
+        
+        function stopDrag() {
+          document.documentElement.removeEventListener('mousemove', doDrag, false);
+          document.documentElement.removeEventListener('mouseup', stopDrag, false);
+          
+          // Update state if we're near max/min
+          const currentHeight = parseInt(document.defaultView.getComputedStyle(consoleContainer).height, 10);
+          if (currentHeight > window.innerHeight * 0.6) {
+            isConsoleMaximized = true;
+            maximizeBtn.innerHTML = '<i class="fas fa-compress me-1"></i> Minimize';
+          } else if (currentHeight < window.innerHeight * 0.3) {
+            isConsoleMaximized = false;
+            maximizeBtn.innerHTML = '<i class="fas fa-expand me-1"></i> Maximize';
+          }
+        }
+        
+        document.documentElement.addEventListener('mousemove', doDrag, false);
+        document.documentElement.addEventListener('mouseup', stopDrag, false);
+      });
+      
+      // Execute code using Piston API
+      async function executeCode(code, language) {
+        const config = languageConfig[language];
+        
+        try {
+          // Show loading state
+          runBtn.innerHTML = '<span class="spinner"></span> Running';
+          runBtn.disabled = true;
+          
+          consoleOutput.innerHTML = `[${new Date().toLocaleTimeString()}] Executing ${language} code...\n`;
+          
+          const payload = {
+            language: config.pistonLang,
+            version: config.pistonVersion,
+            files: [{
+              name: language === 'java' ? 'Main.java' : 
+                    language === 'cpp' ? 'main.cpp' : 'main',
+              content: code
+            }]
+          };
+
+          if (config.compileCmd) {
+            payload.compile = {
+              cmd: config.compileCmd
+            };
+          }
+
+          const response = await fetch('https://emkc.org/api/v2/piston/execute', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          });
+          
+          const data = await response.json();
+          
+          // Clear previous output
+          consoleOutput.innerHTML = '';
+          
+          // Display execution results
+          if (data.compile && data.compile.stderr) {
+            consoleOutput.innerHTML += `=== Compilation Error ===\n${data.compile.stderr}\n\n`;
+          }
+          
+          if (data.run) {
+            if (data.run.stdout) {
+              consoleOutput.innerHTML += `=== Output ===\n${data.run.stdout}\n`;
+            }
+            if (data.run.stderr) {
+              consoleOutput.innerHTML += `=== Runtime Error ===\n${data.run.stderr}\n`;
+            }
+            
+            // Show execution summary
+            consoleOutput.innerHTML += `\n=== Execution Summary ===
+Language: ${language}
+Exit Code: ${data.run.code || 0}
+Execution Time: ${data.run.time || 0}ms
+Memory Usage: ${data.run.memory || 'N/A'}\n`;
+          } else {
+            consoleOutput.innerHTML += "No execution output received.\n";
+          }
+        } catch (error) {
+          consoleOutput.innerHTML += `=== Fatal Error ===\n${error.message}\n`;
+        } finally {
+          // Reset button state
+          runBtn.innerHTML = '<i class="fas fa-play me-1"></i> Run Code';
+          runBtn.disabled = false;
+          
+          // Auto-scroll to bottom
+          consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+      }
+      
+      // Run button click handler
+      runBtn.addEventListener('click', () => {
+        const code = editor.getValue();
+        executeCode(code, currentLanguage);
+      });
+      
+      // Reset button click handler
+      resetBtn.addEventListener('click', () => {
+        editor.setValue(languageConfig[currentLanguage].template);
+        consoleOutput.innerHTML = `[${new Date().toLocaleTimeString()}] Reset ${currentLanguage} template.\n`;
+      });
+      
+      // Language selector change handler
+      languageSelector.addEventListener('change', (e) => {
+        currentLanguage = e.target.value;
+        const languageMap = {
+          python: 'python',
+          javascript: 'javascript',
+          java: 'java',
+          cpp: 'cpp'
+        };
+        
+        monaco.editor.setModelLanguage(editor.getModel(), languageMap[currentLanguage]);
+        editor.setValue(languageConfig[currentLanguage].template);
+        consoleOutput.innerHTML = `[${new Date().toLocaleTimeString()}] Switched to ${currentLanguage}.\n`;
+      });
+    });
+
+    // Sidebar toggle functionality
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    
+    menuToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('active');
+      sidebarOverlay.classList.toggle('active');
+    });
+    
+    sidebarOverlay.addEventListener('click', () => {
+      sidebar.classList.remove('active');
+      sidebarOverlay.classList.remove('active');
+    });
+  </script>
+</body>
+</html>
